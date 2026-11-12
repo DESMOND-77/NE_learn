@@ -1,0 +1,77 @@
+{
+  "id": "signaux-telecoms",
+  "title": "Signaux et télécommunications",
+  "subtitle": "De l'onde au bit : fréquence, échantillonnage, quantification, bruit et modulation.",
+  "level": 1,
+  "discipline": "télécommunications",
+  "duration": "3 h",
+  "prerequisites": ["Mathématiques de base : fonctions, puissances et logarithmes", "Systèmes de numération"],
+  "objectives": ["Distinguer signal analogique et représentation numérique", "Relier fréquence, période et longueur d'onde", "Expliquer échantillonnage, quantification et codage", "Appliquer Nyquist-Shannon et la capacité de Shannon dans leurs domaines de validité", "Comparer ASK, FSK, PSK et une modulation QAM simple", "Calculer un temps de transmission et interpréter un SNR"],
+  "skills": ["Lecture de graphiques de signaux", "Calculs de débit et capacité", "Vocabulaire de transmission"],
+  "quizId": "quiz-telecoms",
+  "lessons": [
+    {
+      "id": "caracteristiques", "title": "Décrire un signal", "duration": "35 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Un signal transporte une information en faisant varier une grandeur physique : tension, intensité lumineuse ou champ électromagnétique. Un signal analogique varie continûment dans le temps et en amplitude ; une représentation numérique utilise des valeurs discrètes, souvent codées en bits."},
+        {"type": "interactive", "component": "signal-lab", "props": {}, "caption": "Modifie amplitude, fréquence et phase : observe la sinusoïde et les grandeurs calculées."},
+        {"type": "formula", "text": "x(t) = A × sin(2πft + φ) ; T = 1/f ; λ = v/f", "variables": ["A : amplitude (unité de la grandeur)", "f : fréquence en hertz (Hz)", "T : période en secondes (s)", "φ : phase en radians", "λ : longueur d'onde en mètres", "v : vitesse de propagation en m/s"]},
+        {"type": "paragraph", "text": "Dans le vide, v ≈ 3,00 × 10⁸ m/s. Dans un câble ou une fibre, la vitesse est plus faible et dépend du milieu. À 2,4 GHz, la longueur d'onde dans le vide vaut environ 12,5 cm."},
+        {"type": "heading", "text": "Bande passante et débit ne sont pas synonymes"},
+        {"type": "paragraph", "text": "La bande passante analogique B est un intervalle de fréquences en Hz. Le débit binaire est un nombre de bits par seconde. Le débit symbole (baud) est un nombre de symboles par seconde. Un symbole peut coder plusieurs bits : avec M états idéaux, log₂(M) bits par symbole."},
+        {"type": "note", "variant": "warning", "title": "Confusion fréquente", "text": "Une liaison de 100 MHz n'a pas automatiquement un débit de 100 Mbit/s. Le débit dépend aussi de la modulation, du codage, du bruit, des interférences et de la surcharge protocolaire."}
+      ]
+    },
+    {
+      "id": "numerisation", "title": "Échantillonnage, quantification, codage", "duration": "45 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Numériser un signal consiste à mesurer sa valeur à des instants réguliers (**échantillonnage**), à arrondir chaque mesure à un niveau disponible (**quantification**), puis à représenter ce niveau en bits (**codage**)."},
+        {"type": "interactive", "component": "sampling-lab", "props": {}, "caption": "Réduis la fréquence d'échantillonnage : observe l'aliasing puis augmente les bits de quantification."},
+        {"type": "formula", "text": "fe ≥ 2 × fmax ; N = 2^n ; q = (Vmax − Vmin)/N ; débit brut = fe × n", "variables": ["fe : fréquence d'échantillonnage (Hz)", "fmax : fréquence maximale du signal à bande limitée (Hz)", "n : bits par échantillon", "N : nombre de niveaux", "q : pas de quantification"]},
+        {"type": "paragraph", "text": "Le théorème de Nyquist-Shannon s'applique à un signal à bande limitée et à des hypothèses idéales de reconstruction. En pratique, on utilise une marge et des filtres anti-repliement. Si fe est trop faible, des composantes hautes fréquences se replient et deviennent impossibles à distinguer : c'est l'**aliasing**."},
+        {"type": "heading", "text": "Exemple audio"},
+        {"type": "paragraph", "text": "Un signal limité à 4 kHz échantillonné à 8 kHz sur 8 bits donne un débit brut de 8 000 × 8 = 64 kbit/s par canal, avant compression et surcharge. Le CD audio utilise 44,1 kHz et 16 bits par canal : 705,6 kbit/s par canal, soit 1,4112 Mbit/s en stéréo PCM non compressée."},
+        {"type": "paragraph", "text": "Pour un quantificateur uniforme idéal et un signal sinusoïdal de pleine échelle, le rapport signal/bruit de quantification est approximativement SQNR ≈ 6,02n + 1,76 dB. Cette approximation ne décrit pas tous les signaux ni tous les convertisseurs réels."},
+        {"type": "quiz-link", "quizId": "quiz-telecoms", "text": "Quiz : numérisation et débits"}
+      ]
+    },
+    {
+      "id": "bruit-capacite", "title": "Bruit, atténuation et capacité", "duration": "40 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Le bruit perturbe la mesure du signal. Le rapport signal/bruit **SNR** compare la puissance du signal à celle du bruit. En décibels : SNR(dB) = 10 log₁₀(Psignal/Pbruit). Un SNR de 30 dB correspond à un rapport de puissances de 1000."},
+        {"type": "formula", "text": "C = B × log₂(1 + S/N)", "variables": ["C : capacité théorique du canal en bit/s", "B : bande passante en Hz", "S/N : rapport signal/bruit linéaire, pas la valeur en dB"]},
+        {"type": "paragraph", "text": "La capacité de Shannon est une limite théorique pour un canal à bruit additif blanc gaussien (AWGN) dans les conditions du modèle. Ce n'est pas une promesse de débit utile : codage, surcharge, retransmissions et contraintes matérielles réduisent le débit applicatif."},
+        {"type": "interactive", "component": "shannon-calculator", "props": {}, "caption": "Fais varier B et le SNR en dB : l'outil convertit le SNR en rapport linéaire avant d'appliquer la formule."},
+        {"type": "heading", "text": "Affaiblissement et distorsion"},
+        {"type": "paragraph", "text": "L'atténuation réduit l'amplitude avec la distance ; la distorsion modifie la forme du signal. Un amplificateur augmente le signal et le bruit, tandis qu'un répéteur numérique régénère les symboles. En fibre, l'atténuation s'exprime souvent en dB/km et dépend de la longueur d'onde et de la qualité des soudures/connecteurs."},
+        {"type": "note", "variant": "warning", "title": "dB de puissance vs amplitude", "text": "Pour un rapport de puissances, utilisez 10 log₁₀. Pour un rapport d'amplitudes dans un système de même impédance, utilisez 20 log₁₀. Ne mélangez pas les deux."}
+      ]
+    },
+    {
+      "id": "modulations", "title": "Moduler pour transmettre", "duration": "45 min",
+      "blocks": [
+        {"type": "paragraph", "text": "La modulation adapte un signal au canal de transmission. En modulation analogique, on fait varier l'amplitude (AM), la fréquence (FM) ou la phase (PM) d'une porteuse. En modulation numérique, des symboles discrets représentent des groupes de bits."},
+        {"type": "interactive", "component": "modulation-lab", "props": {}, "caption": "Compare ASK, FSK et PSK sur la même séquence binaire. Les graphiques sont des modèles idéalisés, pas des mesures radio."},
+        {"type": "table", "headers": ["Modulation", "Grandeur variée", "Idée", "Compromis"], "rows": [["ASK", "Amplitude", "Niveaux d'amplitude distincts", "Simple, sensible au bruit d'amplitude"], ["FSK", "Fréquence", "Fréquences distinctes selon les symboles", "Robuste, peut occuper plus de spectre"], ["PSK", "Phase", "États de phase distincts", "Efficace, nécessite une récupération de phase"], ["QPSK", "Phase (4 états)", "2 bits par symbole", "Plus efficace que BPSK à débit symbole égal"], ["QAM", "Amplitude + phase", "Constellation de points I/Q", "Plus de bits/symbole mais SNR requis plus élevé"]]},
+        {"type": "paragraph", "text": "L'**OFDM** (Orthogonal Frequency-Division Multiplexing) répartit les données sur de nombreuses sous-porteuses orthogonales. Chaque sous-porteuse peut utiliser une modulation comme QPSK ou QAM. OFDM est une technique de multiplexage/modulation multiporteuse utilisée notamment en Wi-Fi et LTE/5G selon les modes."},
+        {"type": "heading", "text": "Multiplexage : partager le support"},
+        {"type": "table", "headers": ["Technique", "Partage"], "rows": [["TDM", "Le temps en intervalles"], ["FDM", "La bande de fréquences"], ["WDM", "Les longueurs d'onde optiques"], ["CDM", "Des codes de spreading"]]},
+        {"type": "heading", "text": "Temps de transmission"},
+        {"type": "formula", "text": "t_sérialisation = volume en bits / débit en bit/s ; t_total ≈ t_sérialisation + t_propagation", "variables": ["1 octet = 8 bits", "Préfixes décimaux réseau : 1 Mbit/s = 10⁶ bit/s", "Le délai de propagation dépend de la distance et de la vitesse dans le milieu"]},
+        {"type": "paragraph", "text": "Envoyer 1 Mo (10⁶ octets) sur 100 Mbit/s demande 0,08 s de sérialisation, hors surcharge et propagation. Si l'on parle de 1 Mio (2²⁰ octets), le volume est différent : précisez toujours les unités."},
+        {"type": "note", "variant": "info", "title": "Pour aller plus loin", "text": "Les modules ingénieur approfondiront les constellations, le codage canal, les bilans de liaison, les antennes, l'OFDM et les architectures mobiles. Ici, l'objectif est de relier correctement les grandeurs physiques et les débits."}
+      ]
+    }
+  ],
+  "references": [
+    {"title": "Shannon (1948) — A Mathematical Theory of Communication", "url": "https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf", "type": "publication académique"},
+    {"title": "ITU — Recommandations de radiocommunication", "url": "https://www.itu.int/ITU-R/", "type": "normalisation"},
+    {"title": "3GPP — Spécifications des réseaux mobiles", "url": "https://www.3gpp.org/technologies", "type": "normalisation"},
+    {"title": "IEEE 802.11 — Wireless LAN", "url": "https://www.ieee802.org/11/", "type": "standard"}
+  ],
+  "revisionSheet": {
+    "keyPoints": ["T=1/f ; λ=v/f ; la vitesse dépend du milieu.", "Numérisation : échantillonnage → quantification → codage.", "fe ≥ 2fmax pour un signal à bande limitée ; filtres et marge en pratique.", "Débit brut = fe × n ; niveaux = 2^n.", "SNR dB = 10log10(S/N) ; convertir en linéaire avant Shannon.", "Shannon est une limite théorique, pas le débit applicatif garanti.", "Hz, baud et bit/s sont trois grandeurs différentes.", "Modulation : faire varier amplitude, fréquence ou phase ; QAM combine amplitude et phase."],
+    "formulas": ["T = 1/f", "λ = v/f", "fe ≥ 2fmax", "N = 2^n ; q = (Vmax−Vmin)/N", "Débit brut = fe × n", "SNR(dB) = 10log10(S/N)", "C = B log2(1+S/N)", "t = bits / débit"],
+    "commands": []
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "id": "quiz-routage",
+  "title": "Quiz — Routage",
+  "courseId": "routage-fondamental",
+  "level": 2,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "single",
+      "prompt": "Pour 10.1.2.5, quelle route est choisie si les trois existent ?",
+      "options": [
+        "10.0.0.0/8 OSPF",
+        "10.1.0.0/16 RIP",
+        "10.1.2.0/24 OSPF",
+        "0.0.0.0/0 statique"
+      ],
+      "answer": 2,
+      "explanation": "Le longest prefix match passe avant l’AD et la métrique.",
+      "id": "quiz-routage-q1",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "Applique d'abord le longest prefix match ; la distance administrative ne départage que des préfixes identiques appris par plusieurs sources.",
+      "pitfalls": "Ne choisis pas la route seulement parce que son protocole a une meilleure AD : la spécificité passe avant."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle est la distance administrative Cisco par défaut d’OSPF ?",
+      "options": [
+        "1",
+        "90",
+        "110",
+        "120"
+      ],
+      "answer": 2,
+      "explanation": "OSPF=110 ; statique=1 ; RIP=120 ; EIGRP interne=90.",
+      "id": "quiz-routage-q2",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "Rappelle les valeurs Cisco par défaut : statique 1, EIGRP interne 90, OSPF 110, RIP 120 ; elles sont configurables.",
+      "pitfalls": "Ne mélange pas distance administrative et métrique : OSPF utilise aussi un coût."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle famille décrit OSPF ?",
+      "options": [
+        "Vecteur de distance",
+        "État de liens",
+        "Path-vector",
+        "Application"
+      ],
+      "answer": 1,
+      "explanation": "OSPF inonde des LSA, construit une carte de zone et applique Dijkstra.",
+      "id": "quiz-routage-q3",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "OSPF distribue des informations d'état de liens puis calcule les meilleurs chemins ; ce n'est pas un simple comptage de sauts.",
+      "pitfalls": "Ne classe pas OSPF comme vecteur de distance : RIP joue ce rôle."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Quelle métrique RIP indique une destination inaccessible ?",
+      "answer": 16,
+      "explanation": "RIP limite le diamètre à 15 sauts ; 16 signifie infini/inaccessible.",
+      "id": "quiz-routage-q4",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "RIP représente l'infini par 16 sauts ; une route à cette métrique est considérée inaccessible.",
+      "pitfalls": "Ne réponds pas 15 : quinze est le dernier nombre de sauts encore atteignable."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quelles conditions favorisent une adjacence OSPF ?",
+      "options": [
+        "Même area",
+        "Timers Hello/Dead compatibles",
+        "Même subnet/masque sur le lien",
+        "Même hostname"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Les paramètres OSPF doivent correspondre ; le hostname n’est pas une condition.",
+      "id": "quiz-routage-q5",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "Vérifie les paramètres qui doivent correspondre sur le lien : zone, timers, subnet/masque, et selon le cas authentification et type de réseau.",
+      "pitfalls": "Le hostname n'a pas besoin d'être identique ; en revanche le router-id doit être unique."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Une route aller suffit pour garantir un ping réussi.",
+      "answer": false,
+      "explanation": "La destination doit aussi connaître un chemin de retour, et ICMP ne doit pas être filtré.",
+      "id": "quiz-routage-q6",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "Un ping exige un aller et un retour ; teste aussi le filtrage ICMP et l'état réel de la destination.",
+      "pitfalls": "Ne conclus pas à une panne de routage aller sur la seule absence de réponse ICMP."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle commande IOS vérifie les voisins OSPF ?",
+      "options": [
+        "show ip ospf neighbor",
+        "show vlan brief",
+        "show arp",
+        "show mac address-table"
+      ],
+      "answer": 0,
+      "explanation": "show ip ospf neighbor affiche l’état des adjacences, notamment FULL.",
+      "id": "quiz-routage-q7",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "La table des voisins OSPF montre les adjacences et leurs états ; c'est le point de départ avant d'analyser les routes apprises.",
+      "pitfalls": "show ip route montre le résultat du routage, pas directement l'état des voisins."
+    },
+    {
+      "type": "single",
+      "prompt": "Pourquoi configurer passive-interface côté LAN dans OSPF ?",
+      "options": [
+        "Pour supprimer le réseau de la table",
+        "Pour annoncer le subnet sans envoyer de Hello aux utilisateurs",
+        "Pour désactiver IP",
+        "Pour augmenter le TTL"
+      ],
+      "answer": 1,
+      "explanation": "Le réseau reste annoncé mais aucune adjacence n’est formée sur l’interface passive.",
+      "id": "quiz-routage-q8",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "Une interface passive reste annoncée dans OSPF mais n'envoie plus de Hello, ce qui évite des adjacences côté utilisateurs.",
+      "pitfalls": "Ne retire pas le réseau de la configuration OSPF si tu veux continuer à l'annoncer."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle route est la route par défaut IPv4 ?",
+      "options": [
+        "255.255.255.255/32",
+        "127.0.0.0/8",
+        "0.0.0.0/0",
+        "224.0.0.0/4"
+      ],
+      "answer": 2,
+      "explanation": "0.0.0.0/0 correspond à toute destination et sert de dernier recours.",
+      "id": "quiz-routage-q9",
+      "topic": "Routage",
+      "courseRef": "routage-fondamental",
+      "reasoning": "La route par défaut est le préfixe le moins spécifique possible : il couvre toutes les destinations IPv4.",
+      "pitfalls": "Ne confonds pas 0.0.0.0/0 avec une adresse d'hôte ou avec la passerelle elle-même."
+    }
+  ]
+}

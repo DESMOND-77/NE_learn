@@ -1,0 +1,143 @@
+{
+  "id": "quiz-adressage",
+  "title": "Quiz — Adressage IPv4",
+  "courseId": "adressage-ipv4",
+  "level": 2,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "single",
+      "prompt": "Dans 192.168.10.70/26, quelle est l’adresse réseau ?",
+      "options": [
+        "192.168.10.0",
+        "192.168.10.64",
+        "192.168.10.65",
+        "192.168.10.128"
+      ],
+      "answer": 1,
+      "explanation": "Le pas est 64 ; 70 appartient au bloc 64–127.",
+      "reasoning": "Avec /26, le pas du dernier octet est 64 ; encadre 70 entre les bornes 64 et 127 pour trouver le réseau.",
+      "id": "quiz-adressage-q1",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "pitfalls": "Ne choisis pas 192.168.10.0 : l'adresse réseau dépend du préfixe, pas seulement des trois premiers octets."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Combien d’hôtes utilisables dans un /27 (convention réseau + broadcast) ?",
+      "answer": 30,
+      "explanation": "2^(32−27)−2 = 32−2 = 30.",
+      "id": "quiz-adressage-q2",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Calcule d'abord 2^(32−27)=32 adresses, puis retire réseau et broadcast dans la convention LAN classique.",
+      "pitfalls": "Ne réponds pas 32 si l'énoncé demande les hôtes utilisables ; /31 et /32 sont des cas particuliers."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel masque correspond à /20 ?",
+      "options": [
+        "255.255.240.0",
+        "255.255.248.0",
+        "255.255.252.0",
+        "255.255.224.0"
+      ],
+      "answer": 0,
+      "explanation": "20 bits = 8+8+4 ; le troisième octet est 11110000=240.",
+      "id": "quiz-adressage-q3",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Répartis les 20 bits réseau en 8+8+4 ; les quatre bits de poids fort du troisième octet donnent 240.",
+      "pitfalls": "Ne mets pas 255 au troisième octet : cela correspondrait à /24, pas /20."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quelles plages sont privées RFC 1918 ?",
+      "options": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16",
+        "169.254.0.0/16"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "169.254/16 est link-local, pas une plage privée RFC 1918.",
+      "id": "quiz-adressage-q4",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Compare chaque plage aux trois blocs RFC 1918 ; les autres plages spéciales ont un usage distinct.",
+      "pitfalls": "169.254/16 est link-local et 172.32/16 est public : ne les classe pas comme privées RFC 1918."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle est l’adresse de broadcast de 172.16.35.123/20 ?",
+      "options": [
+        "172.16.35.255",
+        "172.16.39.255",
+        "172.16.47.255",
+        "172.16.255.255"
+      ],
+      "answer": 2,
+      "explanation": "Pas de 16 au troisième octet : bloc 32–47, donc broadcast 172.16.47.255.",
+      "id": "quiz-adressage-q5",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Le /20 agit sur le troisième octet avec un pas de 16 ; 35 appartient au bloc 32–47, dont la borne haute est le broadcast.",
+      "pitfalls": "Ne calcule pas le broadcast dans le seul dernier octet quand le préfixe est inférieur à /24."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Le préfixe /31 permet deux adresses utilisables sur un lien point-à-point selon RFC 3021.",
+      "answer": true,
+      "explanation": "RFC 3021 définit l’usage des /31 sur les liens point-à-point ; la règle −2 ne s’y applique pas.",
+      "id": "quiz-adressage-q6",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Identifie l'exception RFC 3021 : sur un lien point-à-point /31, les deux adresses servent aux extrémités.",
+      "pitfalls": "N'applique pas mécaniquement −2 à tous les préfixes ; vérifie le contexte du lien."
+    },
+    {
+      "type": "single",
+      "prompt": "Une adresse 169.254.x.x indique souvent…",
+      "options": [
+        "Une adresse publique routable",
+        "Une auto-configuration link-local après échec DHCPv4",
+        "Une adresse multicast",
+        "Une adresse de loopback"
+      ],
+      "answer": 1,
+      "explanation": "APIPA/link-local ne fournit pas une connectivité Internet normale ; vérifier DHCP.",
+      "id": "quiz-adressage-q7",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Une adresse 169.254/16 est auto-configurée sur le lien lorsqu'aucun bail DHCPv4 utilisable n'est obtenu.",
+      "pitfalls": "Ne conclus pas à une panne DNS ou Internet globale : commence par vérifier VLAN, relais et serveur DHCP."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Combien d’adresses au total dans 10.0.0.0/22 ?",
+      "answer": 1024,
+      "explanation": "2^(32−22)=2^10=1024 ; 1022 hôtes dans la convention classique.",
+      "id": "quiz-adressage-q8",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Le nombre total d'adresses dépend seulement des bits hôte : 32−22=10, donc 2^10.",
+      "pitfalls": "Ne retire pas deux adresses ici : la question porte sur le total, pas sur les hôtes classiques."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Le masque 255.0.255.0 est un masque CIDR valide.",
+      "answer": false,
+      "explanation": "Les bits à 1 doivent être contigus ; ce masque alterne des bits réseau et hôte.",
+      "id": "quiz-adressage-q9",
+      "topic": "Adressage IPv4",
+      "courseRef": "adressage-ipv4",
+      "reasoning": "Écris le masque en binaire et vérifie que tous les 1 précèdent tous les 0 sans alternance.",
+      "pitfalls": "Un masque décimal peut sembler plausible tout en étant non contigu ; CIDR exige la contiguïté."
+    }
+  ]
+}

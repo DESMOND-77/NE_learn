@@ -1,0 +1,149 @@
+{
+  "id": "quiz-subnetting",
+  "title": "Quiz — Subnetting et VLSM",
+  "courseId": "subnetting-vlsm",
+  "level": 2,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "numeric",
+      "prompt": "Combien de /26 dans un /24 ?",
+      "answer": 4,
+      "explanation": "2^(26−24)=4 sous-réseaux.",
+      "id": "quiz-subnetting-q1",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Chaque bit emprunté double le nombre de blocs ; de /24 à /26, deux bits donnent 2² blocs.",
+      "pitfalls": "Ne confonds pas nombre de sous-réseaux et nombre d'hôtes par sous-réseau."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel préfixe minimal convient à 60 hôtes en LAN classique ?",
+      "options": [
+        "/27",
+        "/26",
+        "/25",
+        "/28"
+      ],
+      "answer": 1,
+      "explanation": "/26 offre 62 hôtes ; /27 n’en offre que 30.",
+      "id": "quiz-subnetting-q2",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Teste les puissances de deux autour du besoin : /27 offre 30 hôtes, /26 en offre 62 et couvre donc 60.",
+      "pitfalls": "Choisir le préfixe le plus long ne suffit pas : il faut aussi satisfaire le besoin réel."
+    },
+    {
+      "type": "single",
+      "prompt": "En VLSM, dans quel ordre alloue-t-on les blocs ?",
+      "options": [
+        "Du plus petit au plus grand",
+        "Du plus grand au plus petit",
+        "Par ordre alphabétique",
+        "Au hasard"
+      ],
+      "answer": 1,
+      "explanation": "Le tri décroissant facilite une allocation de blocs alignés et contigus sans chevauchement dans un bloc de base.",
+      "id": "quiz-subnetting-q3",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Allouer les plus grands blocs d'abord réduit la fragmentation et facilite des blocs contigus alignés dans le bloc de base.",
+      "pitfalls": "Ne commence pas par les petits besoins sans vérifier l'alignement ; cela peut bloquer les grands blocs restants."
+    },
+    {
+      "type": "single",
+      "prompt": "192.168.10.0/24 : après 192.168.10.0/25, quel bloc pour 50 hôtes ?",
+      "options": [
+        "192.168.10.64/26",
+        "192.168.10.128/26",
+        "192.168.10.192/27",
+        "192.168.10.128/25"
+      ],
+      "answer": 1,
+      "explanation": "Le premier /25 occupe 0–127. 50 hôtes nécessitent /26, donc 128–191.",
+      "id": "quiz-subnetting-q4",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Marque 0–127 comme occupé, puis dimensionne 50 hôtes en /26 et aligne le bloc suivant sur 128.",
+      "pitfalls": "Ne réutilise pas une plage déjà allouée et ne choisis pas /27, trop petit pour 50 hôtes."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quels protocoles supportent le VLSM ?",
+      "options": [
+        "RIPv1",
+        "RIPv2",
+        "OSPF",
+        "EIGRP"
+      ],
+      "answer": [
+        1,
+        2,
+        3
+      ],
+      "explanation": "RIPv1 ne transporte pas le masque ; les autres sont classless.",
+      "id": "quiz-subnetting-q5",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Le VLSM exige un protocole classless capable de transporter le préfixe avec chaque route.",
+      "pitfalls": "RIPv1 ne transporte pas le masque ; ne le confonds pas avec RIPv2."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel résumé couvre exactement 192.168.0.0/24 à 192.168.3.0/24 ?",
+      "options": [
+        "192.168.0.0/23",
+        "192.168.0.0/22",
+        "192.168.0.0/21",
+        "192.168.0.0/24"
+      ],
+      "answer": 1,
+      "explanation": "Quatre /24 contigus alignés forment un /22.",
+      "id": "quiz-subnetting-q6",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Quatre /24 contigus et alignés sur une frontière de quatre blocs se résument en retirant deux bits, soit /22.",
+      "pitfalls": "Ne résume pas des blocs non contigus ou mal alignés : le résumé annoncerait aussi des réseaux absents."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Un lien WAN classique nécessite 2 hôtes. Combien d’adresses totales dans le /30 alloué ?",
+      "answer": 4,
+      "explanation": "Un /30 contient réseau, deux hôtes et broadcast : 4 adresses.",
+      "id": "quiz-subnetting-q7",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Un /30 laisse deux bits hôte, soit quatre adresses : réseau, deux hôtes et broadcast.",
+      "pitfalls": "Ne réponds pas deux : la question demande les adresses totales, pas les hôtes utilisables."
+    },
+    {
+      "type": "single",
+      "prompt": "Pour 25 hôtes, quel préfixe minimal ?",
+      "options": [
+        "/28",
+        "/29",
+        "/27",
+        "/26"
+      ],
+      "answer": 2,
+      "explanation": "/27 offre 30 hôtes ; /28 offre 14.",
+      "id": "quiz-subnetting-q8",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "Compare /28 (14 hôtes) et /27 (30 hôtes) au besoin de 25 ; retiens le plus petit bloc suffisant.",
+      "pitfalls": "Ne dimensionne pas seulement pour aujourd'hui sans vérifier la marge demandée par le cahier des charges."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Le VLSM supprime le besoin de documenter le plan d’adressage.",
+      "answer": false,
+      "explanation": "La flexibilité augmente le risque d’erreur : documentation et vérification restent indispensables.",
+      "id": "quiz-subnetting-q9",
+      "topic": "Subnetting / VLSM",
+      "courseRef": "subnetting-vlsm",
+      "reasoning": "La taille variable des blocs rend le plan moins intuitif ; documenter réseaux, masques, passerelles et usages reste nécessaire.",
+      "pitfalls": "Ne te fie pas à la mémoire ni au nom des VLAN : seul le plan d'adressage vérifié fait référence."
+    }
+  ]
+}

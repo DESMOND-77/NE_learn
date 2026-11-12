@@ -1,0 +1,396 @@
+{
+  "id": "reseaux-fondamentaux",
+  "title": "Fondamentaux des réseaux informatiques",
+  "subtitle": "Comprendre ce qu'est un réseau, ses équipements, ses supports et ses topologies.",
+  "level": 1,
+  "discipline": "réseaux",
+  "duration": "2 h 30",
+  "prerequisites": [
+    "Aucun : ce cours est le point de départ du parcours."
+  ],
+  "objectives": [
+    "Définir un réseau informatique et son utilité",
+    "Distinguer LAN, MAN, WAN et PAN",
+    "Identifier le rôle des équipements : carte réseau, commutateur, routeur, point d'accès",
+    "Comparer les supports cuivre, fibre optique et sans-fil",
+    "Lire un schéma réseau simple"
+  ],
+  "skills": [
+    "Vocabulaire réseau de base",
+    "Lecture de topologie",
+    "Choix d'un support de transmission"
+  ],
+  "quizId": "quiz-reseaux-bases",
+  "lessons": [
+    {
+      "id": "quest-ce-quun-reseau",
+      "title": "Qu'est-ce qu'un réseau ?",
+      "duration": "25 min",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Imagine deux ordinateurs dans une salle de classe. Pour partager un fichier, on peut utiliser une clé USB. Mais si les deux machines sont reliées par un câble, le fichier peut circuler directement : c'est le début d'un **réseau informatique**."
+        },
+        {
+          "type": "heading",
+          "text": "Définition"
+        },
+        {
+          "type": "paragraph",
+          "text": "Un réseau informatique est un ensemble d'équipements reliés entre eux par des supports de transmission, qui échangent des données en respectant des règles communes appelées **protocoles** (protocols). Ces règles définissent le format des messages, leur ordre et les actions à réaliser à la réception."
+        },
+        {
+          "type": "heading",
+          "text": "Pourquoi mettre des machines en réseau ?"
+        },
+        {
+          "type": "list",
+          "items": [
+            "**Partager des ressources** : fichiers, imprimantes, connexion Internet.",
+            "**Communiquer** : messagerie, voix sur IP, visioconférence.",
+            "**Centraliser** : serveurs de fichiers, annuaires, sauvegardes.",
+            "**Mutualiser les coûts** : une seule liaison Internet pour tout un bâtiment."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Classer les réseaux par étendue"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Type",
+            "Étendue",
+            "Exemple"
+          ],
+          "rows": [
+            [
+              "PAN (Personal Area Network)",
+              "Quelques mètres",
+              "Téléphone ↔ écouteurs Bluetooth"
+            ],
+            [
+              "LAN (Local Area Network)",
+              "Salle, bâtiment, campus",
+              "Réseau d'un lycée ou d'une entreprise"
+            ],
+            [
+              "MAN (Metropolitan Area Network)",
+              "Ville",
+              "Interconnexion de sites municipaux"
+            ],
+            [
+              "WAN (Wide Area Network)",
+              "Pays, monde",
+              "Réseau d'un opérateur, Internet"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "variant": "info",
+          "title": "À retenir",
+          "text": "Internet est le réseau de réseaux : il interconnecte des milliers de réseaux autonomes grâce à la pile de protocoles TCP/IP."
+        },
+        {
+          "type": "heading",
+          "text": "Client, serveur et pair-à-pair"
+        },
+        {
+          "type": "paragraph",
+          "text": "Dans le modèle **client-serveur** (client-server), le client demande un service et le serveur y répond : c'est le cas du Web (navigateur ↔ serveur Web). Dans le modèle **pair-à-pair** (peer-to-peer), chaque machine peut être tour à tour client et serveur."
+        },
+        {
+          "type": "heading",
+          "text": "Mesurer un réseau"
+        },
+        {
+          "type": "list",
+          "items": [
+            "**Débit** (bandwidth) : quantité de données transmise par seconde, en bit/s.",
+            "**Latence** (delay) : temps nécessaire à une donnée pour traverser le réseau, en ms.",
+            "**Gigue** (jitter) : variation de la latence, critique pour la voix et la vidéo.",
+            "**Taux de perte** : pourcentage de paquets qui n'arrivent pas à destination."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Un débit élevé ne garantit pas une latence faible : une liaison satellite peut offrir beaucoup de débit mais avec un délai important. Ces deux grandeurs sont distinctes : améliorer l'une ne garantit pas l'autre."
+        }
+      ]
+    },
+    {
+      "id": "equipements-reseau",
+      "title": "Les équipements d'un réseau",
+      "duration": "35 min",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Chaque équipement d'interconnexion travaille à une couche différente du modèle OSI (vu en détail dans le cours dédié). Cette idée est fondamentale : **le rôle d'un équipement se déduit de la couche à laquelle il opère**."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Équipement",
+            "Couche OSI",
+            "Rôle"
+          ],
+          "rows": [
+            [
+              "Carte réseau (NIC)",
+              "1–2",
+              "Connecte la machine au support ; possède une adresse MAC"
+            ],
+            [
+              "Répéteur / concentrateur (hub)",
+              "1",
+              "Régénère le signal ; diffuse à tout le monde (obsolète)"
+            ],
+            [
+              "Commutateur (switch)",
+              "2",
+              "Relie les machines d'un LAN ; apprend les adresses MAC ; crée un domaine de collision par port"
+            ],
+            [
+              "Routeur (router)",
+              "3",
+              "Relie des réseaux IP différents ; choisit le chemin des paquets"
+            ],
+            [
+              "Point d'accès (AP)",
+              "1–2",
+              "Étend le LAN sur un support radio Wi-Fi"
+            ],
+            [
+              "Passerelle (gateway)",
+              "3+",
+              "Fait communiquer des réseaux aux protocoles différents"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "variant": "warning",
+          "title": "Hub vs switch : une différence capitale",
+          "text": "Un hub répète le signal sur tous les ports : toutes les machines partagent le même domaine de collision. Un switch apprend quelle adresse MAC se trouve derrière chaque port et n'envoie la trame qu'au bon destinataire. Les hubs ont disparu des réseaux modernes."
+        },
+        {
+          "type": "heading",
+          "text": "Le commutateur (switch) en bref"
+        },
+        {
+          "type": "paragraph",
+          "text": "Quand une trame arrive, le switch lit l'adresse MAC source et l'associe au port d'entrée dans sa **table MAC** (MAC address table). Il lit ensuite l'adresse MAC destination : s'il la connaît, il transmet la trame uniquement sur le port correspondant ; sinon, il l'inonde (flooding) sur tous les ports sauf celui d'entrée. Ce mécanisme d'apprentissage est automatique."
+        },
+        {
+          "type": "heading",
+          "text": "Le routeur en bref"
+        },
+        {
+          "type": "paragraph",
+          "text": "Le routeur possède des interfaces dans plusieurs réseaux IP. Pour chaque paquet reçu, il consulte sa **table de routage** (routing table), choisit la route la plus spécifique (préfixe le plus long), puis réécrit la trame pour l'envoyer vers le prochain saut (next hop). Il décrémente aussi le TTL (Time To Live), qui évite les boucles infinies."
+        },
+        {
+          "type": "heading",
+          "text": "Adresse MAC et adresse IP : deux identités"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "",
+            "Adresse MAC",
+            "Adresse IP"
+          ],
+          "rows": [
+            [
+              "Couche",
+              "2 — Liaison",
+              "3 — Réseau"
+            ],
+            [
+              "Format",
+              "48 bits, ex. 00:1A:2B:3C:4D:5E",
+              "IPv4 : 32 bits, ex. 192.168.1.10"
+            ],
+            [
+              "Attribution",
+              "Gravée par le fabricant",
+              "Configurée par l'administrateur ou DHCP"
+            ],
+            [
+              "Portée",
+              "Locale (le LAN)",
+              "De bout en bout (peut traverser les routeurs)"
+            ],
+            [
+              "Change en route ?",
+              "Oui, à chaque saut",
+              "Non (hors NAT)"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "variant": "tip",
+          "title": "Moyen mnémotechnique",
+          "text": "MAC = qui est la machine sur ce lien local. IP = où se trouve la machine dans l'ensemble du réseau. La trame change à chaque saut, le paquet IP reste le même d'un bout à l'autre (sauf traduction d'adresses NAT)."
+        }
+      ]
+    },
+    {
+      "id": "supports-topologies",
+      "title": "Supports de transmission et topologies",
+      "duration": "35 min",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "Le câble à paires torsadées (copper)"
+        },
+        {
+          "type": "paragraph",
+          "text": "Le câble Ethernet à paires torsadées est le support le plus courant en LAN. Les paires sont torsadées pour réduire les interférences électromagnétiques. Pour les liaisons Ethernet courantes sur paires torsadées (par exemple 1000BASE-T), la longueur maximale d'un canal est de **100 mètres** selon la norme ; d'autres supports cuivre ont des limites différentes."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Catégorie",
+            "Débit typique",
+            "Usage"
+          ],
+          "rows": [
+            [
+              "Cat 5e",
+              "1 Gbit/s",
+              "Bureautique, encore très répandu"
+            ],
+            [
+              "Cat 6",
+              "1 Gbit/s (10 Gbit/s sur courte distance)",
+              "Bâtiments tertiaires"
+            ],
+            [
+              "Cat 6A",
+              "10 Gbit/s sur 100 m",
+              "Câblage neuf performant"
+            ],
+            [
+              "Cat 7 et plus",
+              "10 Gbit/s et au-delà",
+              "Datacenters, exigences spécifiques"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "La fibre optique (fiber)"
+        },
+        {
+          "type": "paragraph",
+          "text": "La fibre transporte la lumière. Elle est insensible aux perturbations électromagnétiques, offre des débits très élevés et porte sur des distances bien plus longues que le cuivre."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Type",
+            "Cœur",
+            "Distance typique",
+            "Usage"
+          ],
+          "rows": [
+            [
+              "Multimode (MMF)",
+              "50 ou 62,5 µm",
+              "Jusqu'à quelques centaines de mètres",
+              "Bâtiments, datacenters"
+            ],
+            [
+              "Monomode (SMF)",
+              "≈ 9 µm",
+              "Plusieurs dizaines de kilomètres",
+              "Liaisons opérateurs, longues distances"
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Les modules enfichables **SFP/SFP+** permettent d'adapter les ports des switches aux différents types de fibre et longueurs d'onde."
+        },
+        {
+          "type": "heading",
+          "text": "Le sans-fil (wireless)"
+        },
+        {
+          "type": "paragraph",
+          "text": "Le Wi-Fi (IEEE 802.11) transporte les trames par ondes radio, principalement sur les bandes 2,4 GHz et 5 GHz (et 6 GHz pour le Wi-Fi 6E). Le support est partagé : les stations se coordonnent pour éviter les collisions (CSMA/CA). Le débit réel dépend de la distance, des obstacles et des interférences."
+        },
+        {
+          "type": "heading",
+          "text": "Topologies physiques et logiques"
+        },
+        {
+          "type": "list",
+          "items": [
+            "**Étoile** : chaque machine est reliée à un switch central. C'est la topologie physique dominante en LAN moderne.",
+            "**Étoile étendue** : plusieurs switches interconnectés, typique d'un bâtiment.",
+            "**Bus** : toutes les machines partagent un même câble (historique).",
+            "**Anneau** : chaque machine relayait le jeton (Token Ring, historique).",
+            "**Maillée** : chemins multiples, utilisée pour la redondance en cœur de réseau et en WAN."
+          ]
+        },
+        {
+          "type": "note",
+          "variant": "info",
+          "title": "Physique ≠ logique",
+          "text": "La topologie physique décrit le câblage réel ; la topologie logique décrit la circulation des données. Un réseau peut être physiquement en étoile et logiquement en anneau (cas historique du Token Ring)."
+        },
+        {
+          "type": "heading",
+          "text": "Lire un schéma réseau"
+        },
+        {
+          "type": "paragraph",
+          "text": "Un schéma réseau représente les équipements par des icônes normalisées (nuage = réseau externe, cercle fléché = routeur, rectangle à flèches = switch) et les liaisons par des traits annotés (interfaces, adresses IP, VLAN). Savoir lire ces annotations est la première compétence du technicien réseau."
+        },
+        {
+          "type": "lab-link",
+          "labId": "lab-premier-lan",
+          "text": "Mets en pratique : construis ton premier LAN dans Packet Tracer"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "title": "Computer Networking: A Top-Down Approach — Kurose & Ross",
+      "type": "ouvrage",
+      "note": "Référence académique de référence sur les réseaux."
+    },
+    {
+      "title": "IEEE 802.3 — Ethernet",
+      "url": "https://standards.ieee.org/",
+      "type": "standard"
+    },
+    {
+      "title": "IEEE 802.11 — Wireless LAN",
+      "url": "https://standards.ieee.org/",
+      "type": "standard"
+    },
+    {
+      "title": "RFC 1122 — Requirements for Internet Hosts",
+      "url": "https://www.rfc-editor.org/rfc/rfc1122",
+      "type": "standard"
+    }
+  ],
+  "revisionSheet": {
+    "keyPoints": [
+      "Un réseau = équipements + supports + protocoles.",
+      "LAN : local ; MAN : ville ; WAN : étendu ; PAN : personnel.",
+      "Le switch travaille en couche 2 (MAC) ; le routeur en couche 3 (IP).",
+      "L'adresse MAC change à chaque saut ; l'adresse IP reste la même de bout en bout (hors NAT).",
+      "Cuivre : 100 m max en Ethernet ; fibre : longue distance et haut débit ; Wi-Fi : support partagé.",
+      "Débit, latence, gigue et perte sont quatre métriques distinctes."
+    ],
+    "formulas": [],
+    "commands": []
+  }
+}

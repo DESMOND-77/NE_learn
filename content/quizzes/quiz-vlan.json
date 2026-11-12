@@ -1,0 +1,143 @@
+{
+  "id": "quiz-vlan",
+  "title": "Quiz — VLAN et commutation",
+  "courseId": "vlan-segmentation",
+  "level": 2,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "single",
+      "prompt": "Que fait un switch si la MAC destination est inconnue ?",
+      "options": [
+        "Il supprime toujours la trame",
+        "Il inonde la trame dans le VLAN sauf sur le port d’entrée",
+        "Il l’envoie au serveur DNS",
+        "Il modifie l’IP destination"
+      ],
+      "answer": 1,
+      "explanation": "L’unicast inconnu est inondé dans le VLAN ; la MAC source est apprise sur le port entrant.",
+      "id": "quiz-vlan-q1",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Sépare apprentissage et diffusion : la source est apprise, puis une destination inconnue provoque une inondation limitée au VLAN.",
+      "pitfalls": "Ne dis pas que le switch jette la trame ni qu'il l'envoie sur tous les VLAN."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Combien de VID VLAN sont utilisables avec 802.1Q (1 à 4094) ?",
+      "answer": 4094,
+      "explanation": "Le VID fait 12 bits ; 0 et 4095 sont réservés.",
+      "id": "quiz-vlan-q2",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Le VID 802.1Q compte 12 bits, mais 0 et 4095 sont réservés ; la plage utilisateur usuelle est 1–4094.",
+      "pitfalls": "Ne réponds pas 4096 : ce sont toutes les valeurs binaires, pas les VID utilisables."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel type de port transporte plusieurs VLAN entre switches ?",
+      "options": [
+        "Access",
+        "Trunk",
+        "Loopback",
+        "Console"
+      ],
+      "answer": 1,
+      "explanation": "Un trunk 802.1Q transporte plusieurs VLAN grâce aux tags.",
+      "id": "quiz-vlan-q3",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Un port access appartient à un VLAN ; un trunk transporte plusieurs VLAN en conservant leur identification 802.1Q.",
+      "pitfalls": "Ne confonds pas trunk et agrégation de liens : ce sont deux notions différentes."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Sur un trunk 802.1Q Cisco, le VLAN natif circule normalement sans tag.",
+      "answer": true,
+      "explanation": "Le VLAN natif transporte les trames non taguées ; il doit correspondre aux deux extrémités.",
+      "id": "quiz-vlan-q4",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Sur un trunk Cisco classique, le VLAN natif est associé aux trames non taguées ; les deux extrémités doivent être cohérentes.",
+      "pitfalls": "Ne suppose pas que tous les VLAN sont tagués ni que le VLAN natif doit rester à 1."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Que faut-il pour du router-on-a-stick ?",
+      "options": [
+        "Une liaison trunk switch-routeur",
+        "Une sous-interface par VLAN",
+        "Une adresse IP de passerelle par sous-interface",
+        "Un câble console par VLAN"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Le routeur associe chaque sous-interface à un VID dot1Q et à un subnet.",
+      "id": "quiz-vlan-q5",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Le routeur doit recevoir les VLAN tagués, les distinguer par sous-interface et servir de passerelle IP dans chaque subnet.",
+      "pitfalls": "Une simple interface access ne transporte qu'un VLAN ; une sous-interface sans encapsulation dot1Q ne suffit pas."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Deux hôtes de VLAN différents communiquent directement en L2 sans routage.",
+      "answer": false,
+      "explanation": "Un VLAN est un domaine de broadcast distinct ; la communication inter-VLAN nécessite du L3.",
+      "id": "quiz-vlan-q6",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Chaque VLAN est un domaine de broadcast distinct ; franchir cette frontière demande un équipement ou une fonction L3.",
+      "pitfalls": "Ne confonds pas trunk L2 et routage inter-VLAN : le trunk ne route pas entre les sous-réseaux."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle commande vérifie les VLAN et leurs ports sur IOS ?",
+      "options": [
+        "show ip route",
+        "show vlan brief",
+        "show ip ospf neighbor",
+        "show version"
+      ],
+      "answer": 1,
+      "explanation": "show vlan brief liste les VLAN et les ports associés.",
+      "id": "quiz-vlan-q7",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Choisis la commande qui expose la base VLAN et l'affectation des ports, pas seulement les trunks ou la configuration texte.",
+      "pitfalls": "show interfaces trunk montre les trunks, mais ne remplace pas show vlan brief pour la vue des ports access."
+    },
+    {
+      "type": "single",
+      "prompt": "Pourquoi activer BPDU Guard sur un port utilisateur PortFast ?",
+      "options": [
+        "Pour accélérer OSPF",
+        "Pour désactiver le port si une BPDU inattendue arrive",
+        "Pour créer un VLAN",
+        "Pour attribuer une IP"
+      ],
+      "answer": 1,
+      "explanation": "BPDU Guard protège contre l’ajout non autorisé d’un équipement de commutation.",
+      "id": "quiz-vlan-q8",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Un port utilisateur ne devrait pas recevoir de BPDU ; en recevoir signale un équipement de commutation inattendu ou une boucle potentielle.",
+      "pitfalls": "Ne confonds pas BPDU Guard et Root Guard : ils ne réagissent pas au même type de BPDU."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Combien d’octets ajoute un tag 802.1Q dans la trame ?",
+      "answer": 4,
+      "explanation": "Le tag comprend TPID (2 octets) et TCI (2 octets) ; le FCS est recalculé.",
+      "id": "quiz-vlan-q9",
+      "topic": "VLAN / Commutation",
+      "courseRef": "vlan-segmentation",
+      "reasoning": "Additionne les champs du tag : TPID sur deux octets et TCI sur deux octets, puis le FCS est recalculé.",
+      "pitfalls": "Ne compte pas le FCS comme faisant partie du tag ; il est présent dans la trame de toute façon."
+    }
+  ]
+}

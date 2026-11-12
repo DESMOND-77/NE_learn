@@ -1,0 +1,152 @@
+{
+  "id": "quiz-telecoms",
+  "title": "Quiz — Signaux et télécommunications",
+  "courseId": "signaux-telecoms",
+  "level": 1,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "numeric",
+      "prompt": "Un signal de 500 Hz a quelle période en millisecondes ?",
+      "answer": 2,
+      "explanation": "T=1/f=1/500 s=0,002 s=2 ms.",
+      "unit": "ms",
+      "id": "quiz-telecoms-q1",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Inverse la fréquence pour obtenir la période en secondes, puis convertis en millisecondes.",
+      "pitfalls": "Ne confonds pas Hz et kHz : une erreur d'unité déplace le résultat d'un facteur mille."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Signal limité à 4 kHz : fréquence d’échantillonnage minimale théorique en kHz ?",
+      "answer": 8,
+      "explanation": "Nyquist : fe ≥ 2fmax = 8 kHz.",
+      "unit": "kHz",
+      "id": "quiz-telecoms-q2",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Applique la condition de Nyquist à la fréquence maximale du signal, puis garde l'unité demandée.",
+      "pitfalls": "La valeur minimale théorique suppose un signal à bande limitée et des filtres idéaux ; en pratique on prévoit une marge."
+    },
+    {
+      "type": "numeric",
+      "prompt": "8 kHz × 8 bits par échantillon = quel débit brut en kbit/s ?",
+      "answer": 64,
+      "explanation": "8000×8=64000 bit/s=64 kbit/s, hors compression et surcharge.",
+      "unit": "kbit/s",
+      "id": "quiz-telecoms-q3",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Multiplie la fréquence d'échantillonnage par le nombre de bits par échantillon, puis convertis bit/s en kbit/s.",
+      "pitfalls": "Ce débit est brut : compression, codage canal et surcharge protocolaire ne sont pas inclus."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Un SNR de 30 dB correspond à quel rapport de puissances linéaire ?",
+      "answer": 1000,
+      "explanation": "S/N=10^(30/10)=1000.",
+      "id": "quiz-telecoms-q4",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Pour un rapport de puissances, repasse du dB au linéaire avec 10^(dB/10).",
+      "pitfalls": "N'utilise pas 20 log ou 10^(dB/20) ici : l'énoncé porte sur des puissances, pas des amplitudes."
+    },
+    {
+      "type": "single",
+      "prompt": "Dans Shannon C=B log2(1+S/N), que représente B ?",
+      "options": [
+        "Débit en bit/s",
+        "Bande passante en Hz",
+        "Nombre de bits par symbole",
+        "Longueur du câble"
+      ],
+      "answer": 1,
+      "explanation": "B est la largeur de bande en Hz ; C est le résultat en bit/s.",
+      "id": "quiz-telecoms-q5",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Identifie chaque variable de Shannon : B est la largeur de bande, S/N le rapport de puissances linéaire, C le résultat en bit/s.",
+      "pitfalls": "N'injecte pas directement un SNR en dB dans log2(1+S/N) : convertis-le d'abord en linéaire."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quelles affirmations sont correctes ?",
+      "options": [
+        "Hz et bit/s sont identiques",
+        "Un symbole peut transporter plusieurs bits",
+        "La quantification introduit une erreur",
+        "Le débit utile égale toujours la capacité de Shannon"
+      ],
+      "answer": [
+        1,
+        2
+      ],
+      "explanation": "Les symboles peuvent coder plusieurs bits ; l’arrondi crée une erreur de quantification.",
+      "id": "quiz-telecoms-q6",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Distingue nombre d'états d'un symbole et erreur introduite par l'arrondi de quantification ; les deux affirmations sont indépendantes.",
+      "pitfalls": "Ne suppose pas qu'un symbole vaut toujours un bit ni que la numérisation est sans erreur."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle modulation fait varier la phase d’une porteuse ?",
+      "options": [
+        "ASK",
+        "FSK",
+        "PSK",
+        "TDM"
+      ],
+      "answer": 2,
+      "explanation": "PSK = Phase Shift Keying ; ASK varie l’amplitude, FSK la fréquence.",
+      "id": "quiz-telecoms-q7",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Relie le nom de la modulation au paramètre modifié : amplitude pour ASK, fréquence pour FSK, phase pour PSK.",
+      "pitfalls": "Ne confonds pas PSK et FSK ; QAM combine amplitude et phase."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Combien de niveaux avec une quantification sur 8 bits ?",
+      "answer": 256,
+      "explanation": "N=2^8=256.",
+      "id": "quiz-telecoms-q8",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Le nombre de niveaux d'un quantificateur uniforme est une puissance de deux du nombre de bits.",
+      "pitfalls": "Ne confonds pas niveaux et bits : huit bits donnent 256 niveaux, pas huit niveaux."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle technique répartit les données sur des sous-porteuses orthogonales ?",
+      "options": [
+        "OFDM",
+        "ARP",
+        "STP",
+        "RIP"
+      ],
+      "answer": 0,
+      "explanation": "OFDM est une modulation multiporteuse à sous-porteuses orthogonales.",
+      "id": "quiz-telecoms-q9",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Reconnais la structure multiporteuse : de nombreuses sous-porteuses orthogonales portent chacune une modulation numérique.",
+      "pitfalls": "OFDM n'est pas une simple modulation à une porteuse comme ASK ou FSK."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Temps de sérialisation de 1 000 000 octets à 100 Mbit/s, en secondes ?",
+      "answer": 0.08,
+      "explanation": "10^6×8 / 10^8 = 0,08 s, hors propagation et surcharge.",
+      "tolerance": 1e-06,
+      "unit": "s",
+      "id": "quiz-telecoms-q10",
+      "topic": "Télécommunications",
+      "courseRef": "signaux-telecoms",
+      "reasoning": "Convertis le volume en bits puis divise par le débit en bit/s ; les unités secondes apparaissent naturellement.",
+      "pitfalls": "Ne mélange pas Mo décimal et Mio binaire, et n'ajoute pas propagation ou surcharge si l'énoncé demande la sérialisation seule."
+    }
+  ]
+}

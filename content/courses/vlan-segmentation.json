@@ -1,0 +1,94 @@
+{
+  "id": "vlan-segmentation",
+  "title": "VLAN, trunk 802.1Q et segmentation",
+  "subtitle": "Segmenter un réseau au niveau 2 : VLAN, ports access, trunk, routage inter-VLAN et sécurité des ports.",
+  "level": 2,
+  "discipline": "réseaux",
+  "duration": "3 h",
+  "prerequisites": ["Cours Fondamentaux (rôle du switch).", "Cours Adressage IPv4 (un subnet par VLAN)."],
+  "objectives": ["Expliquer le fonctionnement d'un commutateur et de sa table MAC", "Créer des VLAN et affecter des ports en mode access", "Configurer un trunk 802.1Q et comprendre le VLAN natif", "Mettre en place le routage inter-VLAN (router-on-a-stick ou SVI)", "Diagnostiquer une erreur de VLAN ou de trunk", "Comprendre l'intérêt de STP et de la sécurité des ports"],
+  "skills": ["Configuration VLAN Cisco IOS", "Trunk 802.1Q", "Routage inter-VLAN", "Diagnostic L2"],
+  "quizId": "quiz-vlan",
+  "lessons": [
+    {
+      "id": "commutation",
+      "title": "Commutation Ethernet et domaines",
+      "duration": "30 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Un commutateur relie les machines d'un LAN. Il construit sa **table MAC** en observant le trafic : chaque trame reçue lui apprend quelle adresse MAC source se trouve derrière quel port."},
+        {"type": "heading", "text": "Les trois décisions du switch"},
+        {"type": "list", "ordered": true, "items": ["**Apprendre** (learn) : enregistrer MAC source → port d'entrée dans la table MAC.", "**Transférer** (forward) : si la MAC destination est connue, envoyer la trame uniquement sur le port associé.", "**Inonder** (flood) : si la destination est inconnue, unicast inconnu ou broadcast, envoyer sur tous les ports du même VLAN sauf le port d'entrée."]},
+        {"type": "heading", "text": "Domaines de collision et de broadcast"},
+        {"type": "table", "headers": ["Équipement", "Domaine de collision", "Domaine de broadcast"], "rows": [["Hub", "Un seul pour tout l'équipement", "Un seul"], ["Switch (sans VLAN)", "Un par port", "Un seul pour tout le switch"], ["Switch (avec VLAN)", "Un par port", "Un par VLAN"], ["Routeur", "Un par interface", "Un par interface (ne transfère pas les broadcasts)"]]},
+        {"type": "note", "variant": "info", "title": "Idée clé", "text": "Un switch crée un domaine de collision par port, mais tous ses ports restent dans le même domaine de broadcast par défaut. Les VLAN découpent ce domaine de broadcast ; un routeur (ou un switch L3) est nécessaire pour communiquer entre VLAN."},
+        {"type": "heading", "text": "Table MAC : expiration"},
+        {"type": "paragraph", "text": "Les entrées dynamiques de la table MAC expirent après un délai d'inactivité (300 secondes par défaut sur beaucoup de switches Cisco). Ce vieillissement (aging) permet de s'adapter aux déplacements de machines. Une entrée statique ne vieillit pas."}
+      ]
+    },
+    {
+      "id": "vlan",
+      "title": "Les VLAN : séparer sans recâbler",
+      "duration": "40 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Un **VLAN** (Virtual LAN, IEEE 802.1Q) est un domaine de broadcast logique indépendant de la topologie physique. Deux machines du même VLAN communiquent en L2 même si elles sont sur des switches différents ; deux machines de VLAN différents ne communiquent pas directement, même branchées sur le même switch."},
+        {"type": "interactive", "component": "vlan-visualizer", "props": {}, "caption": "Affecte les ports à des VLAN et observe quels hôtes peuvent communiquer directement."},
+        {"type": "heading", "text": "Pourquoi des VLAN ?"},
+        {"type": "list", "items": ["**Sécurité** : isoler les services (compta, invités, serveurs).", "**Performance** : réduire la taille des domaines de broadcast.", "**Organisation** : regrouper par fonction plutôt que par emplacement.", "**Flexibilité** : déplacer un utilisateur de service sans changer le câblage."]},
+        {"type": "heading", "text": "Configuration Cisco IOS : création et ports access"},
+        {"type": "code", "language": "cisco", "title": "Créer les VLAN et affecter les ports", "code": "Switch> enable\nSwitch# configure terminal\nSwitch(config)# vlan 10\nSwitch(config-vlan)# name ADMIN\nSwitch(config-vlan)# exit\nSwitch(config)# vlan 20\nSwitch(config-vlan)# name COMMERCE\nSwitch(config-vlan)# exit\nSwitch(config)# interface range fastEthernet 0/1 - 8\nSwitch(config-if-range)# switchport mode access\nSwitch(config-if-range)# switchport access vlan 10\nSwitch(config-if-range)# exit\nSwitch(config)# interface range fastEthernet 0/9 - 16\nSwitch(config-if-range)# switchport mode access\nSwitch(config-if-range)# switchport access vlan 20\nSwitch(config-if-range)# end\nSwitch# show vlan brief"},
+        {"type": "heading", "text": "Vérification"},
+        {"type": "code", "language": "cisco", "title": "Commandes de vérification", "code": "show vlan brief            ! VLAN et ports associés\nshow interfaces status     ! état, VLAN, speed/duplex\nshow mac address-table     ! MAC apprises par port et VLAN\nshow interfaces trunk      ! trunks actifs et VLAN autorisés"},
+        {"type": "note", "variant": "warning", "title": "Erreur fréquente", "text": "Un port configuré en access dans le VLAN 10 qui reçoit une trame taguée 20 ne la transférera pas comme attendu : un port access appartient à un seul VLAN (hors voix). Vérifie toujours `show vlan brief` après configuration."}
+      ]
+    },
+    {
+      "id": "trunk",
+      "title": "Trunk 802.1Q : transporter plusieurs VLAN",
+      "duration": "40 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Quand deux switches sont reliés et doivent transporter plusieurs VLAN, on configure la liaison en **trunk** (liaison de transport 802.1Q). Le trunk ajoute une **étiquette** (tag) de 4 octets dans la trame Ethernet pour indiquer le VLAN d'origine."},
+        {"type": "heading", "text": "Le tag 802.1Q"},
+        {"type": "table", "headers": ["Champ", "Taille", "Rôle"], "rows": [["TPID (Tag Protocol Identifier)", "16 bits", "Valeur 0x8100 : indique une trame taguée"], ["PCP (Priority Code Point)", "3 bits", "Priorité 802.1p (QoS L2)"], ["DEI", "1 bit", "Indicateur d'éligibilité au rejet"], ["VID (VLAN Identifier)", "12 bits", "Numéro de VLAN (1 à 4094)"]]},
+        {"type": "paragraph", "text": "Le VID sur 12 bits permet 4096 valeurs : 0 et 4095 sont réservées, il reste **4094 VLAN utilisables**. Le FCS est recalculé après ajout du tag."},
+        {"type": "heading", "text": "Le VLAN natif (native VLAN)"},
+        {"type": "paragraph", "text": "Sur un trunk 802.1Q, le **VLAN natif** est celui dont les trames circulent **sans étiquette**. Par défaut c'est le VLAN 1 sur les équipements Cisco. Les deux extrémités du trunk doivent utiliser le même VLAN natif, sinon le trafic non tagué est mal classé (native VLAN mismatch) — un problème classique détecté par CDP/LLDP."},
+        {"type": "note", "variant": "warning", "title": "Bonne pratique de sécurité", "text": "Ne pas laisser le VLAN natif = VLAN 1. Choisir un VLAN natif dédié et inutilisé (ex. 999), ne pas y mettre d'utilisateurs, et filtrer les VLAN autorisés sur le trunk avec `switchport trunk allowed vlan`. Désactiver les ports inutilisés et les placer dans un VLAN « parking »."},
+        {"type": "heading", "text": "Configuration du trunk"},
+        {"type": "code", "language": "cisco", "title": "Trunk 802.1Q entre deux switches", "code": "Switch(config)# interface gigabitEthernet 0/1\nSwitch(config-if)# switchport trunk encapsulation dot1q   ! selon modèle\nSwitch(config-if)# switchport mode trunk\nSwitch(config-if)# switchport trunk native vlan 999\nSwitch(config-if)# switchport trunk allowed vlan 10,20,999\nSwitch(config-if)# end\nSwitch# show interfaces trunk"},
+        {"type": "heading", "text": "Vérifier et diagnostiquer"},
+        {"type": "list", "items": ["`show interfaces trunk` : le trunk est-il up ? Quels VLAN sont actifs ?", "`show vlan brief` : les ports access sont-ils dans le bon VLAN ?", "Les deux extrémités ont-elles le même VLAN natif ?", "Les VLAN transportés sont-ils autorisés des deux côtés ?", "Les machines ont-elles des IP dans le même subnet s'ils sont dans le même VLAN ?"]},
+        {"type": "lab-link", "labId": "lab-vlan", "text": "TP : configure VLAN et trunk dans Packet Tracer"}
+      ]
+    },
+    {
+      "id": "inter-vlan",
+      "title": "Routage inter-VLAN",
+      "duration": "45 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Par construction, deux VLAN ne communiquent pas en L2. Pour permettre (et contrôler) les échanges entre VLAN, il faut un équipement de couche 3 : un routeur ou un switch multicouche (L3)."},
+        {"type": "heading", "text": "Option 1 — Router-on-a-stick"},
+        {"type": "paragraph", "text": "Une seule liaison physique entre le switch et le routeur, configurée en trunk. Le routeur crée une **sous-interface** par VLAN, avec une adresse IP qui servira de passerelle aux hôtes du VLAN."},
+        {"type": "code", "language": "cisco", "title": "Router-on-a-stick", "code": "! Côté switch : trunk vers le routeur\nSwitch(config)# interface gigabitEthernet 0/1\nSwitch(config-if)# switchport mode trunk\nSwitch(config-if)# switchport trunk allowed vlan 10,20\n!\n! Côté routeur : sous-interfaces\nRouter(config)# interface gigabitEthernet 0/0.10\nRouter(config-subif)# encapsulation dot1Q 10\nRouter(config-subif)# ip address 192.168.10.1 255.255.255.0\nRouter(config-subif)# interface gigabitEthernet 0/0.20\nRouter(config-subif)# encapsulation dot1Q 20\nRouter(config-subif)# ip address 192.168.20.1 255.255.255.0\nRouter(config-subif)# exit\nRouter(config)# interface gigabitEthernet 0/0\nRouter(config-if)# no shutdown"},
+        {"type": "heading", "text": "Option 2 — SVI sur switch L3"},
+        {"type": "paragraph", "text": "Un switch multicouche crée une interface virtuelle par VLAN (**SVI**, Switch Virtual Interface) et active le routage IP. C'est la solution la plus performante en cœur de réseau d'entreprise."},
+        {"type": "code", "language": "cisco", "title": "SVI sur switch multicouche", "code": "SwitchL3(config)# ip routing\nSwitchL3(config)# interface vlan 10\nSwitchL3(config-if)# ip address 192.168.10.1 255.255.255.0\nSwitchL3(config-if)# no shutdown\nSwitchL3(config-if)# interface vlan 20\nSwitchL3(config-if)# ip address 192.168.20.1 255.255.255.0\nSwitchL3(config-if)# no shutdown\nSwitchL3# show ip route"},
+        {"type": "note", "variant": "warning", "title": "Points de vigilance", "text": "Les hôtes doivent utiliser l'adresse de la sous-interface/SVI comme passerelle par défaut. Le routage inter-VLAN ouvre la communication : si l'on veut filtrer, il faut ajouter des ACL. Sans ACL, tout est routé entre VLAN."},
+        {"type": "heading", "text": "STP, EtherChannel et sécurité des ports : l'essentiel"},
+        {"type": "paragraph", "text": "Quand on câble de la redondance entre switches, des boucles L2 apparaissent. **STP** (Spanning Tree Protocol, IEEE 802.1D puis RSTP 802.1w) bloque certains ports pour supprimer les boucles tout en gardant un chemin de secours. **EtherChannel** (agrégation de liens, LACP 802.3ad/802.1AX) regroupe plusieurs liens physiques en un lien logique. **Port Security** limite les adresses MAC autorisées sur un port access ; **PortFast** accélère la mise en service d'un port d'utilisateur ; **BPDU Guard** désactive un port PortFast qui reçoit une BPDU."},
+        {"type": "note", "variant": "info", "title": "Pour la suite", "text": "STP, RSTP, MSTP, EtherChannel et Port Security feront l'objet de modules avancés dédiés. L'objectif ici est de savoir pourquoi ils existent et comment ils s'articulent avec les VLAN."},
+        {"type": "quiz-link", "quizId": "quiz-vlan", "text": "Quiz de validation VLAN & trunk"}
+      ]
+    }
+  ],
+  "references": [
+    {"title": "IEEE 802.1Q — Bridges and Bridged Networks (VLAN)", "url": "https://www.ieee802.org/1/pages/802.1Q.html", "type": "standard"},
+    {"title": "IEEE 802.1D — MAC Bridges (STP historique)", "url": "https://www.ieee802.org/1/pages/802.1D.html", "type": "standard"},
+    {"title": "Cisco — Configuration des VLAN (documentation IOS)", "url": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/15-2_2_e/configuration/guide/scg_2960.html", "type": "documentation constructeur"},
+    {"title": "RFC 5517 — Private VLANs (extensions de sécurité L2)", "url": "https://www.rfc-editor.org/rfc/rfc5517", "type": "standard"}
+  ],
+  "revisionSheet": {
+    "keyPoints": ["Un VLAN = un domaine de broadcast logique. Un subnet IP par VLAN (bonne pratique).", "Port access : un seul VLAN, trames non taguées vers l'hôte. Port trunk : plusieurs VLAN, trames taguées 802.1Q.", "802.1Q ajoute 4 octets (TPID 0x8100, PCP, DEI, VID 12 bits → 4094 VLAN).", "VLAN natif : trames non taguées sur le trunk ; doit être identique aux deux extrémités.", "Inter-VLAN : router-on-a-stick (sous-interfaces dot1Q) ou SVI sur switch L3 (`ip routing`).", "Switch : apprend MAC source, forward si connue, flood si inconnue/broadcast.", "STP évite les boucles L2 ; LACP agrège les liens ; Port Security limite les MAC."],
+    "formulas": ["VLAN utilisables = 2^12 − 2 = 4094"],
+    "commands": ["show vlan brief", "show interfaces trunk", "show mac address-table", "show interfaces status", "switchport mode access / switchport access vlan <id>", "switchport mode trunk / switchport trunk allowed vlan <liste>", "encapsulation dot1Q <vlan> (sous-interface routeur)", "ip routing + interface vlan <id> (SVI)"]
+  }
+}

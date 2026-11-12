@@ -1,0 +1,16 @@
+{
+  "name": "@ne-learn/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./ipv4": "./src/ipv4.js",
+    "./vlsm": "./src/vlsm.js",
+    "./numeration": "./src/numeration.js",
+    "./telecom": "./src/telecom.js",
+    "./quiz": "./src/quiz.js",
+    "./progress": "./src/progress.js"
+  }
+}

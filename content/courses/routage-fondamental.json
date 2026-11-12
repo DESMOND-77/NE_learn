@@ -1,0 +1,93 @@
+{
+  "id": "routage-fondamental",
+  "title": "Routage statique et dynamique",
+  "subtitle": "Comment les paquets trouvent leur chemin : table de routage, routes statiques, RIP et OSPF.",
+  "level": 2,
+  "discipline": "réseaux",
+  "duration": "3 h 30",
+  "prerequisites": ["Cours Adressage IPv4 et Subnetting.", "Cours Modèle OSI (couche réseau)."],
+  "objectives": ["Lire une table de routage et appliquer le longest prefix match", "Configurer des routes statiques et une route par défaut", "Distinguer distance administrative et métrique", "Expliquer le fonctionnement de RIP (vecteur de distance) et OSPF (état de liens)", "Configurer OSPF mono-area sur des routeurs Cisco", "Diagnostiquer un problème de routage"],
+  "skills": ["Routage statique", "OSPF mono-area", "Lecture de table de routage", "Diagnostic L3"],
+  "quizId": "quiz-routage",
+  "lessons": [
+    {
+      "id": "principes-routage",
+      "title": "Le routage : choisir un chemin",
+      "duration": "35 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Router, c'est déplacer un paquet d'un réseau à un autre jusqu'à sa destination. Chaque routeur prend une décision locale et indépendante : il consulte sa **table de routage** (routing table), choisit la meilleure route, puis transmet le paquet vers le prochain saut (next hop)."},
+        {"type": "heading", "text": "Contenu d'une table de routage"},
+        {"type": "table", "headers": ["Source", "Code Cisco", "Signification"], "rows": [["Connecté", "C", "Réseau directement attaché à une interface up"], ["Local", "L", "Adresse /32 de l'interface elle-même (IOS récents)"], ["Statique", "S", "Route configurée manuellement"], ["RIP", "R", "Apprise via RIP"], ["OSPF", "O", "Apprise via OSPF"], ["EIGRP", "D", "Apprise via EIGRP"], ["BGP", "B", "Apprise via BGP"]]},
+        {"type": "heading", "text": "La règle du plus long préfixe"},
+        {"type": "paragraph", "text": "Si plusieurs routes correspondent à une destination, le routeur choisit **la plus spécifique** : le préfixe le plus long. Pour 10.1.2.5, une route 10.1.2.0/24 l'emporte sur 10.0.0.0/8, quelle que soit la distance administrative ou la métrique : la spécificité du préfixe passe avant tout."},
+        {"type": "code", "language": "cisco", "title": "Lire une table de routage", "code": "Router# show ip route\nCodes: C - connected, L - local, S - static, R - RIP, O - OSPF...\n\nGateway of last resort is 203.0.113.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 203.0.113.1\n      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks\nC        10.1.1.0/24 is directly connected, GigabitEthernet0/0\nL        10.1.1.1/32 is directly connected, GigabitEthernet0/0\nO        10.2.2.0/24 [110/2] via 10.1.1.2, 00:12:34, GigabitEthernet0/1"},
+        {"type": "paragraph", "text": "La notation `[110/2]` se lit : **distance administrative 110** (crédibilité de la source OSPF) et **métrique 2** (coût du chemin selon OSPF)."},
+        {"type": "heading", "text": "Distance administrative vs métrique"},
+        {"type": "table", "headers": ["Source de route", "Distance administrative (Cisco par défaut)"], "rows": [["Connecté", "0"], ["Statique", "1"], ["eBGP", "20"], ["EIGRP (interne)", "90"], ["OSPF", "110"], ["RIP", "120"], ["EIGRP externe", "170"], ["iBGP", "200"]]},
+        {"type": "note", "variant": "info", "title": "Deux comparaisons distinctes", "text": "La distance administrative compare des routes apprises par des sources différentes vers le même préfixe (OSPF 110 vs statique 1 : la statique gagne). La métrique compare des chemins au sein d'un même protocole (le coût OSPF le plus faible gagne)."}
+      ]
+    },
+    {
+      "id": "routage-statique",
+      "title": "Routage statique",
+      "duration": "35 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Une route statique est configurée manuellement. Simple, prévisible, sans surcharge protocolaire, elle convient aux petits réseaux, aux liaisons de secours et aux routes par défaut. Elle ne s'adapte pas automatiquement aux pannes : c'est sa limite."},
+        {"type": "heading", "text": "Configuration Cisco IOS"},
+        {"type": "code", "language": "cisco", "title": "Routes statiques", "code": "! Route vers un réseau distant via un next-hop\nRouter(config)# ip route 192.168.2.0 255.255.255.0 10.0.0.2\n!\n! Route par défaut (tout ce qui n'est pas connu)\nRouter(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1\n!\n! Route statique flottante (secours, AD plus élevée)\nRouter(config)# ip route 192.168.2.0 255.255.255.0 10.0.1.2 150\n!\n! Vérification\nRouter# show ip route static\nRouter# show ip interface brief"},
+        {"type": "heading", "text": "Route par défaut"},
+        {"type": "paragraph", "text": "La route `0.0.0.0/0` correspond à toute destination : c'est la « gateway of last resort ». Elle est utilisée quand aucune route plus spécifique n'existe. Typique : le routeur d'entreprise vers le FAI. Attention : une route par défaut ne dispense pas d'avoir des routes vers les réseaux internes !"},
+        {"type": "heading", "text": "Le routage est bidirectionnel"},
+        {"type": "note", "variant": "warning", "title": "Erreur n°1 des débutants", "text": "Configurer la route aller sur R1 vers le réseau de R2 ne suffit pas : R2 doit aussi connaître le chemin de retour vers le réseau de R1. Un ping échoue souvent parce que le chemin retour manque, pas l'aller."},
+        {"type": "heading", "text": "Quand utiliser le statique ?"},
+        {"type": "list", "items": ["Réseau à quelques routeurs et topologie stable.", "Route par défaut vers l'opérateur.", "Route de secours flottante (AD supérieure) en backup d'un protocole dynamique.", "Politique de routage explicite et auditée."]}
+      ]
+    },
+    {
+      "id": "routage-dynamique",
+      "title": "Routage dynamique : RIP et OSPF",
+      "duration": "60 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Les protocoles de routage dynamique échangent des informations pour construire les tables automatiquement et s'adapter aux pannes. Deux grandes familles pour l'intérieur d'un système autonome (IGP) : **vecteur de distance** et **état de liens** (link-state)."},
+        {"type": "table", "headers": ["Critère", "RIP (Routing Information Protocol)", "OSPF (Open Shortest Path First)"], "rows": [["Famille", "Vecteur de distance", "État de liens"], ["Métrique", "Nombre de sauts (max 15)", "Coût lié à la bande passante"], ["Convergence", "Lente (minutes)", "Rapide"], ["Vision du réseau", "Voisins uniquement", "Carte complète de la zone"], ["Algorithme", "Bellman-Ford", "Dijkstra (SPF)"], ["Transport", "UDP 520", "IP protocole 89"], ["VLSM", "RIPv1 non, RIPv2 oui", "Oui"], ["Échelle", "Petits réseaux", "Réseaux moyens à grands"], ["Standard", "RFC 2453 (v2)", "RFC 2328 (v2)"]]},
+        {"type": "heading", "text": "RIP en bref"},
+        {"type": "paragraph", "text": "Chaque routeur RIP annonce périodiquement (toutes les 30 s environ) sa table à ses voisins. La métrique est le nombre de sauts ; 16 signifie inaccessible. Simple à configurer, RIP converge lentement et peut former des boucles transitoires (d'où split horizon, route poisoning, hold-down). Il est surtout pédagogique aujourd'hui."},
+        {"type": "code", "language": "cisco", "title": "RIPv2 minimal", "code": "Router(config)# router rip\nRouter(config-router)# version 2\nRouter(config-router)# no auto-summary\nRouter(config-router)# network 10.0.0.0\nRouter(config-router)# passive-interface gigabitEthernet 0/0   ! côté LAN\nRouter# show ip rip database\nRouter# show ip protocols"},
+        {"type": "heading", "text": "OSPF en bref"},
+        {"type": "paragraph", "text": "OSPF construit une carte complète de la zone via les **LSA** (Link-State Advertisements) inondés à tous les routeurs de la zone. Chaque routeur calcule indépendamment le plus court chemin avec l'algorithme de Dijkstra. Les routeurs forment des **adjacences** avec leurs voisins ; sur un segment multi-accès, un **DR** (Designated Router) et un **BDR** sont élus pour limiter les échanges."},
+        {"type": "list", "items": ["**Hello** : découvrir les voisins et maintenir l'adjacence (10 s par défaut sur broadcast, dead 40 s).", "**DBD** : résumer la base de données d'état de liens.", "**LSR/LSU/LSAck** : demander, mettre à jour et accuser réception des LSA.", "**Coût** : par défaut Cisco, coût = 100 Mbit/s ÷ débit de l'interface (référence ajustable)."]},
+        {"type": "heading", "text": "Configuration OSPF mono-area"},
+        {"type": "code", "language": "cisco", "title": "OSPF area 0 sur deux routeurs", "code": "! R1 — LAN 192.168.1.0/24, lien 10.0.0.0/30\nRouter(config)# router ospf 1\nRouter(config-router)# router-id 1.1.1.1\nRouter(config-router)# network 192.168.1.0 0.0.0.255 area 0\nRouter(config-router)# network 10.0.0.0 0.0.0.3 area 0\nRouter(config-router)# passive-interface gigabitEthernet0/0\n!\n! R2 — LAN 192.168.2.0/24, lien 10.0.0.0/30\nRouter(config)# router ospf 1\nRouter(config-router)# router-id 2.2.2.2\nRouter(config-router)# network 192.168.2.0 0.0.0.255 area 0\nRouter(config-router)# network 10.0.0.0 0.0.0.3 area 0\nRouter(config-router)# passive-interface gigabitEthernet0/0\n!\nRouter# show ip ospf neighbor\nRouter# show ip route ospf\nRouter# show ip ospf interface brief"},
+        {"type": "note", "variant": "warning", "title": "Pourquoi passive-interface ?", "text": "Sur une interface vers les utilisateurs, il est inutile (et imprudent) d'envoyer des Hello OSPF. `passive-interface` annonce le réseau dans OSPF sans former d'adjacence sur cette interface. À utiliser côté LAN, jamais côté lien entre routeurs."},
+        {"type": "heading", "text": "Conditions d'adjacence OSPF"},
+        {"type": "list", "items": ["Même area ID des deux côtés.", "Mêmes timers Hello/Dead.", "Même type de réseau OSPF compatible.", "Même subnet et masque sur le lien.", "Authentification identique si configurée.", "MTU compatible (sinon blocage en EXSTART/EXCHANGE)."]},
+        {"type": "lab-link", "labId": "lab-ospf", "text": "TP : configure OSPF entre trois routeurs"}
+      ]
+    },
+    {
+      "id": "diagnostic-routage",
+      "title": "Diagnostiquer un problème de routage",
+      "duration": "30 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Une panne de routage se diagnostique méthodiquement, pas au hasard. La démarche : vérifier L1/L2, puis L3 aller, puis L3 retour, puis services."},
+        {"type": "heading", "text": "Méthode en 6 étapes"},
+        {"type": "list", "ordered": true, "items": ["**Interfaces** : `show ip interface brief` — up/up ? bonne IP ?", "**Réseaux connectés** : `show ip route connected` — les sous-réseauxs locaux sont-ils présents ?", "**Voisins** : `show ip ospf neighbor` — adjacence FULL ?", "**Routes apprises** : `show ip route` — le réseau distant est-il présent ? par quel protocole ?", "**Chemin aller** : `traceroute` depuis la source — où s'arrête-t-il ?", "**Chemin retour** : vérifier la table de routage du destination — connaît-il la source ?"]},
+        {"type": "heading", "text": "Outils"},
+        {"type": "table", "headers": ["Outil", "Couche", "Ce qu'il révèle"], "rows": [["ping", "L3", "Joignabilité globale (ICMP Echo)"], ["traceroute / tracert", "L3", "Chemin suivi, saut où ça bloque"], ["show ip route", "L3", "Routes présentes, AD/métrique, next-hop"], ["show ip ospf neighbor", "L3", "État des adjacences"], ["show ip protocols", "L3", "Protocoles actifs, réseaux annoncés, AD"], ["Wireshark", "L2–L7", "Contenu réel des échanges, retransmissions, erreurs"]]},
+        {"type": "note", "variant": "tip", "title": "Le piège du ping", "text": "Un ping qui échoue ne dit pas si c'est l'aller ou le retour qui casse. Teste depuis les deux extrémités et regarde les tables de routage des deux côtés. ICMP peut aussi être filtré par une ACL ou un pare-feu : l'échec du ping ne prouve pas toujours une panne de routage."},
+        {"type": "quiz-link", "quizId": "quiz-routage", "text": "Quiz : routage et diagnostic"}
+      ]
+    }
+  ],
+  "references": [
+    {"title": "RFC 2328 — OSPF Version 2", "url": "https://www.rfc-editor.org/rfc/rfc2328", "type": "standard"},
+    {"title": "RFC 2453 — RIP Version 2", "url": "https://www.rfc-editor.org/rfc/rfc2453", "type": "standard"},
+    {"title": "RFC 4271 — BGP-4", "url": "https://www.rfc-editor.org/rfc/rfc4271", "type": "standard"},
+    {"title": "Cisco — IP Routing Configuration Guide (OSPF)", "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/configuration/xe-16/iro-xe-16-book.html", "type": "documentation constructeur"}
+  ],
+  "revisionSheet": {
+    "keyPoints": ["Le routeur choisit la route au préfixe le plus long (longest prefix match).", "Distance administrative : crédibilité de la source (connecté 0, statique 1, OSPF 110, RIP 120).", "Métrique : coût d'un chemin au sein d'un protocole (sauts pour RIP, coût pour OSPF).", "Routage statique : simple mais sans adaptation automatique ; route par défaut 0.0.0.0/0.", "RIP : vecteur de distance, sauts, UDP 520, max 15 sauts, convergence lente.", "OSPF : état de liens, Dijkstra, coût, IP protocole 89, adjacences, DR/BDR, areas.", "Une communication qui échoue : vérifier l'aller ET le retour.", "passive-interface : annoncer le LAN sans envoyer de Hello."],
+    "formulas": ["Coût OSPF Cisco = débit de référence (100 Mbit/s par défaut) ÷ débit interface"],
+    "commands": ["show ip route", "show ip ospf neighbor", "show ip ospf interface brief", "show ip protocols", "ip route <réseau> <masque> <next-hop> [distance]", "router ospf <pid> / network <réseau> <wildcard> area <id>", "traceroute <destination>"]
+  }
+}

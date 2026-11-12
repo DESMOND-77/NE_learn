@@ -1,0 +1,21 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {BrowserRouter,Routes,Route,Link} from 'react-router-dom';
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/jetbrains-mono';
+import './styles/global.css';
+import {AppProvider} from './lib/store.jsx';
+import Layout from './components/Layout.jsx';
+import Home from './pages/Home.jsx';
+import {Courses,Labs,Paths} from './pages/Catalog.jsx';
+import Course from './pages/Course.jsx';
+import Lab from './pages/Lab.jsx';
+import {QuizIndex,QuizRunner} from './pages/Quiz.jsx';
+import Tools from './pages/Tools.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Auth from './pages/Auth.jsx';
+import Assistant from './pages/Assistant.jsx';
+import {Documentation,Glossary,Projects,Certifications} from './pages/Resources.jsx';
+import {EmptyState} from './components/ui.jsx';
+class ErrorBoundary extends React.Component{constructor(props){super(props);this.state={error:null};}static getDerivedStateFromError(error){return {error};}render(){if(this.state.error)return <div className="fatal-error"><h1>Une erreur d'affichage est survenue</h1><p>Recharge la page pour retrouver ton espace. Ta progression enregistrée reste conservée.</p><button className="btn primary" onClick={()=>window.location.reload()}>Recharger</button></div>;return this.props.children;}}
+ReactDOM.createRoot(document.getElementById('root')).render(<React.StrictMode><ErrorBoundary><BrowserRouter><AppProvider><Routes><Route element={<Layout/>}><Route index element={<Home/>}/><Route path="espace" element={<Dashboard/>}/><Route path="parcours" element={<Paths/>}/><Route path="cours" element={<Courses/>}/><Route path="cours/:id" element={<Course/>}/><Route path="laboratoires" element={<Labs/>}/><Route path="laboratoires/:id" element={<Lab/>}/><Route path="outils" element={<Tools/>}/><Route path="quiz" element={<QuizIndex/>}/><Route path="quiz/:id" element={<QuizRunner/>}/><Route path="examen/:id" element={<QuizRunner exam/>}/><Route path="assistant" element={<Assistant/>}/><Route path="documentation" element={<Documentation/>}/><Route path="glossaire" element={<Glossary/>}/><Route path="projets" element={<Projects/>}/><Route path="certifications" element={<Certifications/>}/><Route path="connexion" element={<Auth/>}/><Route path="*" element={<EmptyState title="Cette page n'existe pas" description="Reviens à l'accueil pour poursuivre ton parcours."><Link className="btn primary" to="/">Retour à l'accueil</Link></EmptyState>}/></Route></Routes></AppProvider></BrowserRouter></ErrorBoundary></React.StrictMode>);

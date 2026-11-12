@@ -1,0 +1,387 @@
+{
+  "id": "numeration",
+  "title": "Systèmes de numération pour les réseaux",
+  "subtitle": "Binaire, décimal, octal, hexadécimal : les bases indispensables pour comprendre l'adressage IP.",
+  "level": 1,
+  "discipline": "fondamentaux",
+  "duration": "2 h",
+  "prerequisites": [
+    "Aucun."
+  ],
+  "objectives": [
+    "Comprendre le principe des systèmes de numération positionnels",
+    "Convertir un nombre entre bases 2, 8, 10 et 16",
+    "Convertir une adresse IPv4 en binaire et inversement",
+    "Utiliser l'hexadécimal pour lire des adresses MAC et IPv6"
+  ],
+  "skills": [
+    "Conversion de bases",
+    "Lecture binaire d'une adresse IP",
+    "Calcul mental de puissances de 2"
+  ],
+  "quizId": "quiz-numeration",
+  "lessons": [
+    {
+      "id": "systemes-positionnels",
+      "title": "Le principe des bases",
+      "duration": "30 min",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Nous comptons en base 10 car nous avons dix doigts. Un ordinateur, lui, ne connaît que deux états électriques stables : courant / pas courant. Il compte donc en **base 2**, le binaire (binary)."
+        },
+        {
+          "type": "heading",
+          "text": "Numération de position"
+        },
+        {
+          "type": "paragraph",
+          "text": "Dans un système positionnel, la valeur d'un chiffre dépend de sa position. En base 10, le nombre 345 signifie 3×10² + 4×10¹ + 5×10⁰. Le même principe s'applique à toute base b : chaque position pèse b^position."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Base",
+            "Nom",
+            "Chiffres",
+            "Usage en réseaux"
+          ],
+          "rows": [
+            [
+              "2",
+              "Binaire (binary)",
+              "0, 1",
+              "Adresses IP, masques, calculs machine"
+            ],
+            [
+              "8",
+              "Octal",
+              "0 à 7",
+              "Historique ; permissions Unix"
+            ],
+            [
+              "10",
+              "Décimal (decimal)",
+              "0 à 9",
+              "Lecture humaine des adresses"
+            ],
+            [
+              "16",
+              "Hexadécimal (hex)",
+              "0–9, A–F",
+              "Adresses MAC, IPv6, dumps mémoire"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Les puissances de 2 à connaître par cœur"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "2^n",
+            "Valeur",
+            "2^n",
+            "Valeur"
+          ],
+          "rows": [
+            [
+              "2^0",
+              "1",
+              "2^5",
+              "32"
+            ],
+            [
+              "2^1",
+              "2",
+              "2^6",
+              "64"
+            ],
+            [
+              "2^2",
+              "4",
+              "2^7",
+              "128"
+            ],
+            [
+              "2^3",
+              "8",
+              "2^8",
+              "256"
+            ],
+            [
+              "2^4",
+              "16",
+              "2^10",
+              "1024"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "variant": "tip",
+          "title": "Astuce subnetting",
+          "text": "Les tailles de sous-réseaux sont toujours des puissances de 2 : 2, 4, 8, 16, 32, 64, 128, 256… Si tu connais tes puissances de 2, le subnetting devient beaucoup plus rapide."
+        },
+        {
+          "type": "heading",
+          "text": "L'hexadécimal, compact et lisible"
+        },
+        {
+          "type": "paragraph",
+          "text": "Un chiffre hexadécimal représente exactement 4 bits (un quartet). Deux chiffres hexadécimaux représentent un octet. C'est pourquoi les adresses MAC s'écrivent en hexadécimal : `00:1A:2B:3C:4D:5E` représente 6 octets = 48 bits."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Décimal",
+            "Binaire (4 bits)",
+            "Hexadécimal"
+          ],
+          "rows": [
+            [
+              "0",
+              "0000",
+              "0"
+            ],
+            [
+              "5",
+              "0101",
+              "5"
+            ],
+            [
+              "10",
+              "1010",
+              "A"
+            ],
+            [
+              "12",
+              "1100",
+              "C"
+            ],
+            [
+              "15",
+              "1111",
+              "F"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "conversions",
+      "title": "Convertir entre les bases",
+      "duration": "40 min",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "Décimal → binaire : divisions successives"
+        },
+        {
+          "type": "paragraph",
+          "text": "On divise le nombre par 2 et on note les restes. La suite des restes, lue **du dernier au premier**, donne l'écriture binaire. Exemple avec 168 :"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "title": "168 en binaire",
+          "code": "168 ÷ 2 = 84  reste 0\n 84 ÷ 2 = 42  reste 0\n 42 ÷ 2 = 21  reste 0\n 21 ÷ 2 = 10  reste 1\n 10 ÷ 2 = 5   reste 1\n  5 ÷ 2 = 2   reste 1\n  2 ÷ 2 = 1   reste 0\n  1 ÷ 2 = 0   reste 1\nLecture des restes de bas en haut : 10101000"
+        },
+        {
+          "type": "heading",
+          "text": "Binaire → décimal : poids des positions"
+        },
+        {
+          "type": "paragraph",
+          "text": "On additionne les poids des positions où le bit vaut 1. Exemple : `10101000` = 128 + 32 + 8 = **168**."
+        },
+        {
+          "type": "heading",
+          "text": "Binaire ↔ hexadécimal : par groupes de 4 bits"
+        },
+        {
+          "type": "paragraph",
+          "text": "Chaque groupe de 4 bits correspond à un chiffre hexadécimal. `11000000` se coupe en `1100 0000` = `C0`. Inversement, `A9` = `1010 1001`."
+        },
+        {
+          "type": "interactive",
+          "component": "base-converter",
+          "props": {},
+          "caption": "Convertisseur interactif : saisis une valeur, choisis les bases, observe le résultat et les étapes de calcul."
+        },
+        {
+          "type": "heading",
+          "text": "Application : une adresse IPv4 en binaire"
+        },
+        {
+          "type": "paragraph",
+          "text": "Une adresse IPv4 tient sur 32 bits, soit 4 octets. Chaque nombre entre points est un octet écrit en décimal pour faciliter la lecture humaine. `192.168.1.10` s'écrit en binaire :"
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "title": "192.168.1.10",
+          "code": "192      . 168      . 1        . 10\n11000000 . 10101000 . 00000001 . 00001010"
+        },
+        {
+          "type": "note",
+          "variant": "info",
+          "title": "Pourquoi c'est important",
+          "text": "Le masque de sous-réseau ne se comprend vraiment qu'en binaire : le préfixe /24 signifie que les 24 premiers bits identifient le réseau, les 8 derniers identifient l'hôte. Le cours de subnetting repose entièrement sur cette idée."
+        },
+        {
+          "type": "quiz-link",
+          "quizId": "quiz-numeration",
+          "text": "Valide tes conversions avec le quiz"
+        }
+      ]
+    },
+    {
+      "id": "application-ip",
+      "title": "Application : lire une IP et un masque en binaire",
+      "duration": "30 min",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Réunissons tout. Prenons l'adresse `192.168.10.70` avec le masque `255.255.255.192` (soit /26)."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "title": "IP et masque alignés",
+          "code": "IP      : 11000000.10101000.00001010.01000110\nMasque  : 11111111.11111111.11111111.11000000\n          └────── 26 bits réseau ──────┘└ 6 bits hôte ┘"
+        },
+        {
+          "type": "paragraph",
+          "text": "Le **ET logique** (AND) entre l'IP et le masque donne l'adresse réseau : on garde les bits réseau, on met les bits hôte à 0."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "title": "Calcul de l'adresse réseau",
+          "code": "IP      : 11000000.10101000.00001010.01000110\nAND\nMasque  : 11111111.11111111.11111111.11000000\n= Réseau: 11000000.10101000.00001010.01000000\nSoit    : 192.168.10.64"
+        },
+        {
+          "type": "interactive",
+          "component": "subnet-visualizer",
+          "props": {
+            "ip": "192.168.10.70",
+            "prefix": 26
+          },
+          "caption": "Visualise le calcul : déplace le curseur de préfixe pour voir la frontière réseau/hôte se déplacer."
+        },
+        {
+          "type": "paragraph",
+          "text": "Le broadcast s'obtient en mettant tous les bits hôte à 1 : `192.168.10.127`. Les hôtes utilisables vont de `.65` à `.126`, soit 62 machines (2⁶ − 2)."
+        },
+        {
+          "type": "note",
+          "variant": "tip",
+          "title": "Vérification rapide",
+          "text": "Avec un /26, les réseaux avancent par bonds de 64 dans le dernier octet : 0, 64, 128, 192. 70 tombe entre 64 et 127 : le réseau est donc 192.168.10.64/26. Cette technique des « bonds » accélère énormément les calculs."
+        }
+      ]
+    },
+    {
+      "id": "booleen-reseau",
+      "title": "Algèbre de Boole : le AND du subnetting",
+      "duration": "20 min",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "L'algèbre de Boole manipule des valeurs binaires avec des opérateurs logiques. Trois opérateurs suffisent pour comprendre les réseaux : **ET** (AND), **OU** (OR), **NON** (NOT)."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "A",
+            "B",
+            "A AND B",
+            "A OR B",
+            "NOT A"
+          ],
+          "rows": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "1",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Le AND network-bit"
+        },
+        {
+          "type": "paragraph",
+          "text": "Le masque a ses bits réseau à 1 et ses bits hôte à 0. `IP AND masque` conserve donc les bits réseau et annule les bits hôte : c'est exactement la définition de l'adresse réseau."
+        },
+        {
+          "type": "heading",
+          "text": "Le masque inversé (wildcard) pour les ACL"
+        },
+        {
+          "type": "paragraph",
+          "text": "Les listes de contrôle d'accès (ACL) Cisco utilisent le **masque inversé** (wildcard mask) : bits à 0 pour « doit correspondre », bits à 1 pour « peu importe ». Le wildcard d'un /24 est `0.0.0.255` : les trois premiers octets doivent correspondre, le dernier est libre."
+        },
+        {
+          "type": "note",
+          "variant": "warning",
+          "title": "Erreur classique",
+          "text": "Pour un masque de sous-réseau contigu, le wildcard Cisco est son complément bit à bit. Ce n'est pas un masque de réseau : un bit à 0 signifie « doit correspondre », un bit à 1 signifie « peu importe ». Ne confonds pas les deux conventions."
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "title": "RFC 791 — Internet Protocol (IPv4)",
+      "url": "https://www.rfc-editor.org/rfc/rfc791",
+      "type": "standard"
+    },
+    {
+      "title": "RFC 4632 — CIDR",
+      "url": "https://www.rfc-editor.org/rfc/rfc4632",
+      "type": "standard"
+    }
+  ],
+  "revisionSheet": {
+    "keyPoints": [
+      "Chaque position en base b pèse b^position.",
+      "Décimal → binaire : divisions successives par 2, lire les restes à l'envers.",
+      "Binaire → décimal : additionner les poids des bits à 1.",
+      "1 chiffre hexadécimal = 4 bits ; 2 chiffres hex = 1 octet.",
+      "IP AND masque = adresse réseau.",
+      "Les tailles de sous-réseaux sont des puissances de 2."
+    ],
+    "formulas": [
+      "Valeur = Σ chiffre_i × base^position_i",
+      "1 octet = 8 bits = 2 chiffres hexadécimaux"
+    ],
+    "commands": []
+  }
+}
