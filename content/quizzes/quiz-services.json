@@ -1,0 +1,159 @@
+{
+  "id": "quiz-services",
+  "title": "Quiz — Services réseau",
+  "courseId": "services-reseau",
+  "level": 2,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "order",
+      "prompt": "Ordonne les messages DHCP initiaux.",
+      "items": [
+        "REQUEST",
+        "ACK",
+        "DISCOVER",
+        "OFFER"
+      ],
+      "answer": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "explanation": "DORA : Discover → Offer → Request → Acknowledgment.",
+      "id": "quiz-services-q1",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "Reconstitue DORA : découverte du serveur, offre, demande du bail puis accusé de réception final.",
+      "pitfalls": "Ne place pas REQUEST avant OFFER lors de l'obtention initiale ; le renouvellement peut avoir une séquence différente."
+    },
+    {
+      "type": "single",
+      "prompt": "Que résout ARP sur un LAN IPv4 ?",
+      "options": [
+        "Nom → IP",
+        "IP → MAC",
+        "MAC → nom DNS",
+        "Port → application"
+      ],
+      "answer": 1,
+      "explanation": "ARP trouve l’adresse MAC correspondant à une IPv4 du lien local.",
+      "id": "quiz-services-q2",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "ARP répond à une question de livraison locale : quelle adresse MAC possède cette IPv4 sur le lien ?",
+      "pitfalls": "ARP ne résout pas les noms DNS et ne s'utilise pas tel quel en IPv6, où NDP emploie ICMPv6."
+    },
+    {
+      "type": "single",
+      "prompt": "Pour joindre un réseau distant, quelle MAC l’hôte cherche-t-il ?",
+      "options": [
+        "Celle du serveur distant",
+        "Celle de sa passerelle",
+        "Celle du serveur racine DNS",
+        "La MAC broadcast comme destination finale"
+      ],
+      "answer": 1,
+      "explanation": "La trame locale est destinée au prochain saut, généralement la passerelle.",
+      "id": "quiz-services-q3",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "Pour une destination hors subnet, l'hôte envoie la trame au prochain saut indiqué par sa route, généralement la passerelle.",
+      "pitfalls": "Ne cherche pas la MAC du serveur distant : elle n'est pas visible sur le lien local."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quels enregistrements DNS associent un nom à une adresse IP ?",
+      "options": [
+        "A",
+        "AAAA",
+        "CNAME",
+        "MX"
+      ],
+      "answer": [
+        0,
+        1
+      ],
+      "explanation": "A donne IPv4, AAAA donne IPv6 ; CNAME est un alias et MX désigne un serveur de messagerie.",
+      "id": "quiz-services-q4",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "Classe les enregistrements par donnée retournée : A et AAAA contiennent des adresses, CNAME un alias et MX un serveur de messagerie.",
+      "pitfalls": "Ne coche pas CNAME comme réponse directe à une adresse ; il pointe vers un autre nom."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Quel port UDP utilise le serveur DHCPv4 ?",
+      "answer": 67,
+      "explanation": "DHCPv4 : serveur UDP 67, client UDP 68.",
+      "id": "quiz-services-q5",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "Distingue les deux ports DHCPv4 : le serveur écoute UDP 67, le client utilise UDP 68.",
+      "pitfalls": "Ne confonds pas avec DNS (53) ou avec les ports DHCPv6 (546/547)."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel mécanisme permet à DHCP de traverser un routeur ?",
+      "options": [
+        "STP",
+        "Relay agent / ip helper-address",
+        "ARP proxy obligatoire",
+        "NAT DNS"
+      ],
+      "answer": 1,
+      "explanation": "Le relais transforme le broadcast initial en échange routable vers le serveur.",
+      "id": "quiz-services-q6",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "Le broadcast initial ne traverse pas le routeur ; un relais DHCP le transforme en échange routable vers le serveur configuré.",
+      "pitfalls": "Sur IOS, ip helper-address peut relayer d'autres services UDP : vérifie la configuration et la politique de sécurité."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Un ping échoué prouve toujours que le routage est en panne.",
+      "answer": false,
+      "explanation": "ICMP peut être filtré, le retour peut manquer ou l’hôte peut être éteint.",
+      "id": "quiz-services-q7",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "Un échec de ping est un indice, pas une preuve unique : filtrage, retour, destination éteinte et routage sont des hypothèses distinctes.",
+      "pitfalls": "Ne change pas toute la configuration sur la base d'un seul test ICMP."
+    },
+    {
+      "type": "single",
+      "prompt": "ping par IP fonctionne mais le nom ne se résout pas : quel service examiner en premier ?",
+      "options": [
+        "DNS",
+        "STP",
+        "FTP",
+        "NTP"
+      ],
+      "answer": 0,
+      "explanation": "La résolution de nom échoue alors que le test IP fonctionne : examiner résolveur, serveur et enregistrements DNS.",
+      "id": "quiz-services-q8",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "Le test par IP contourne la résolution de nom ; s'il réussit, isole la chaîne DNS avant de toucher au routage.",
+      "pitfalls": "Ne réinstalle pas le navigateur ni ne changes l'adressage sans vérifier résolveur, serveur et enregistrements."
+    },
+    {
+      "type": "single",
+      "prompt": "IPv6 utilise quel protocole pour la découverte de voisins à la place d’ARP ?",
+      "options": [
+        "NDP avec ICMPv6",
+        "RIPv1",
+        "ARPv6",
+        "DHCPv4"
+      ],
+      "answer": 0,
+      "explanation": "NDP assure notamment la découverte de voisins et de routeurs en IPv6.",
+      "id": "quiz-services-q9",
+      "topic": "Services réseau",
+      "courseRef": "services-reseau",
+      "reasoning": "IPv6 remplace ARP par NDP, qui utilise des messages ICMPv6 et des adresses multicast sollicitées.",
+      "pitfalls": "Ne bloque pas ICMPv6 globalement sur un lien IPv6 : cela peut casser découverte de voisins et autoconfiguration."
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "services-reseau",
+  "title": "Services réseau : ARP, DHCP, DNS et ICMP",
+  "subtitle": "Les mécanismes invisibles qui permettent à une machine de communiquer.",
+  "level": 2,
+  "discipline": "réseaux",
+  "duration": "2 h 30",
+  "prerequisites": ["Modèle OSI et pile TCP/IP", "Adressage IPv4"],
+  "objectives": ["Décrire la résolution ARP et distinguer ARP et DNS", "Expliquer les quatre échanges DHCP DORA", "Décrire une résolution DNS récursive et itérative", "Interpréter ping et traceroute à partir d'ICMP", "Diagnostiquer une panne d'adresse, de nom ou de passerelle"],
+  "skills": ["Lecture d'échanges protocolaires", "Diagnostic DHCP et DNS", "Utilisation de Wireshark"],
+  "quizId": "quiz-services",
+  "lessons": [
+    {
+      "id": "arp-icmp", "title": "ARP et ICMP : trouver et tester", "duration": "40 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Pour envoyer un paquet à 192.168.1.20 sur le LAN, une machine connaît l'IP destination mais doit inscrire une adresse MAC destination dans sa trame Ethernet. **ARP** (Address Resolution Protocol, RFC 826) réalise cette correspondance IPv4 → MAC sur le lien local."},
+        {"type": "interactive", "component": "protocol-sequence", "props": {"scenario": "arp"}, "caption": "Déroule la requête ARP en broadcast et la réponse en unicast."},
+        {"type": "list", "ordered": true, "items": ["L'hôte consulte son cache ARP.", "S'il ne connaît pas la MAC, il diffuse : « Qui a 192.168.1.20 ? Réponds à 192.168.1.10 ».", "Tous les hôtes du VLAN reçoient la requête ; seul le propriétaire de l'IP répond avec sa MAC.", "L'émetteur met la correspondance en cache et construit la trame."]},
+        {"type": "note", "variant": "info", "title": "ARP et passerelle", "text": "Si la destination est dans un autre réseau, l'hôte cherche la MAC de sa passerelle, pas celle de la destination distante. ARP ne traverse pas les routeurs. IPv6 utilise NDP (Neighbor Discovery Protocol) avec ICMPv6, pas ARP."},
+        {"type": "heading", "text": "ICMP : messages de contrôle"},
+        {"type": "paragraph", "text": "ICMP (Internet Control Message Protocol, RFC 792) transporte des messages de contrôle et d'erreur pour IP : Echo Request/Reply pour ping, Destination Unreachable, Time Exceeded. Ce n'est pas un service de transport applicatif comme TCP ou UDP."},
+        {"type": "table", "headers": ["Outil", "Mécanisme", "Interprétation prudente"], "rows": [["ping", "ICMP Echo Request → Echo Reply", "Un échec peut venir d'un filtrage ICMP, pas seulement d'une panne"], ["traceroute", "TTL croissant ; réponses Time Exceeded des routeurs (méthode Linux classique UDP ; Windows tracert ICMP)", "Les étoiles peuvent indiquer un routeur qui ne répond pas, pas nécessairement un lien coupé"], ["ip neigh / arp -a", "Cache de voisinage IPv4", "Une entrée incomplète signale une résolution non aboutie"]]},
+        {"type": "code", "language": "bash", "title": "Vérifications Linux", "code": "ip addr show\nip route show\nip neigh show\nping -c 4 192.168.1.1\ntracepath 192.168.2.10"}
+      ]
+    },
+    {
+      "id": "dhcp", "title": "DHCP : obtenir une configuration automatiquement", "duration": "40 min",
+      "blocks": [
+        {"type": "paragraph", "text": "DHCP (Dynamic Host Configuration Protocol, RFC 2131) fournit une adresse IP, un masque, une passerelle, des serveurs DNS et la durée du bail (lease). Il évite la configuration manuelle et les conflits d'adresses."},
+        {"type": "interactive", "component": "protocol-sequence", "props": {"scenario": "dhcp"}, "caption": "DORA : Discover, Offer, Request, Acknowledgment."},
+        {"type": "table", "headers": ["Étape", "Message", "Rôle"], "rows": [["D", "DHCPDISCOVER", "Le client cherche un serveur (broadcast)"], ["O", "DHCPOFFER", "Le serveur propose une configuration"], ["R", "DHCPREQUEST", "Le client demande la configuration choisie"], ["A", "DHCPACK", "Le serveur confirme et accorde le bail"]]},
+        {"type": "paragraph", "text": "DHCPv4 utilise UDP : port serveur 67, port client 68. Un client sans adresse peut utiliser 0.0.0.0 comme source au début de l'échange. Le renouvellement intervient typiquement à 50 % de la durée du bail (T1), avec une tentative de réassociation à 87,5 % (T2) ; ces valeurs peuvent être configurées par le serveur."},
+        {"type": "heading", "text": "DHCP à travers les VLAN : le relais"},
+        {"type": "paragraph", "text": "Un routeur ne transfère pas le broadcast DHCP initial. Si le serveur est dans un autre subnet, l'interface passerelle du VLAN doit relayer la demande vers le serveur en unicast : c'est le rôle du **relay agent** (option 82 possible pour ajouter des informations de relais)."},
+        {"type": "code", "language": "cisco", "title": "Pool DHCP et relais IOS", "code": "! Serveur DHCP sur le routeur\nRouter(config)# ip dhcp excluded-address 192.168.10.1 192.168.10.20\nRouter(config)# ip dhcp pool ADMIN\nRouter(dhcp-config)# network 192.168.10.0 255.255.255.0\nRouter(dhcp-config)# default-router 192.168.10.1\nRouter(dhcp-config)# dns-server 192.168.10.10\nRouter(dhcp-config)# lease 7\n!\n! Relais sur l'interface d'un autre VLAN\nRouter(config)# interface gigabitEthernet0/0.20\nRouter(config-subif)# ip helper-address 192.168.10.10"},
+        {"type": "note", "variant": "warning", "title": "Attention à ip helper-address", "text": "Sur Cisco IOS, ip helper-address peut relayer plusieurs services UDP par défaut, pas uniquement DHCP. Vérifiez les forward-protocol configurés et la politique de sécurité. L'adresse indiquée est celle du serveur DHCP, pas celle du client."},
+        {"type": "heading", "text": "Diagnostic"},
+        {"type": "list", "items": ["Adresse 169.254.x.x : le client n'a pas obtenu de bail DHCPv4 valide.", "Vérifier VLAN du port, trunk, pool, passerelle et exclusion de plage.", "Vérifier la présence du relais dans le bon sens et le chemin retour du serveur.", "Capturer UDP 67/68 : voir quels messages DORA apparaissent et où ils s'arrêtent."]}
+      ]
+    },
+    {
+      "id": "dns", "title": "DNS : des noms aux adresses", "duration": "40 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Le DNS (Domain Name System, RFC 1034/1035) est une base distribuée et hiérarchique qui associe des noms à des données, notamment des adresses IP. Il permet d'utiliser www.exemple.fr plutôt qu'une adresse numérique."},
+        {"type": "interactive", "component": "protocol-sequence", "props": {"scenario": "dns"}, "caption": "Suis la résolution depuis le cache local jusqu'au serveur faisant autorité."},
+        {"type": "list", "ordered": true, "items": ["Le client interroge son résolveur récursif configuré (FAI, entreprise, public).", "Le résolveur utilise ses caches ou interroge la hiérarchie.", "Il contacte un serveur racine, puis le serveur du domaine de premier niveau (.fr), puis le serveur autoritaire de la zone.", "Il renvoie la réponse au client et la garde en cache pendant la durée TTL."]},
+        {"type": "table", "headers": ["Enregistrement", "Rôle"], "rows": [["A", "Nom → adresse IPv4"], ["AAAA", "Nom → adresse IPv6"], ["CNAME", "Alias vers un autre nom"], ["MX", "Serveur de messagerie du domaine"], ["NS", "Serveur DNS autoritaire de la zone"], ["PTR", "Résolution inverse IP → nom"], ["TXT", "Données texte (vérifications, politiques, etc.)"]]},
+        {"type": "paragraph", "text": "DNS utilise classiquement UDP port 53, et TCP port 53 notamment pour les réponses volumineuses et les transferts de zone. Le TTL d'un enregistrement indique la durée de mise en cache autorisée ; modifier un enregistrement ne purge pas instantanément tous les caches."},
+        {"type": "code", "language": "bash", "title": "Interroger DNS sous Linux", "code": "dig www.example.fr A\ndig www.example.fr AAAA\ndig +trace www.example.fr\nresolvectl status\ngetent hosts www.example.fr"},
+        {"type": "note", "variant": "tip", "title": "Séparer IP et nom", "text": "Si ping 1.1.1.1 fonctionne mais ping www.example.fr échoue avec une erreur de résolution, suspecte DNS. Si la résolution réussit mais que la connexion échoue, cherche plutôt routage, pare-feu ou service. Ne conclus pas trop vite à une panne générale."}
+      ]
+    },
+    {
+      "id": "diagnostic-services", "title": "Dépanner dans le bon ordre", "duration": "30 min",
+      "blocks": [
+        {"type": "heading", "text": "Un scénario concret"},
+        {"type": "paragraph", "text": "Un utilisateur n'accède plus au site intranet. Avant de réinstaller le navigateur, collectez des faits : IP obtenue, masque, passerelle, DNS, résultat d'un ping par IP, résolution du nom, connexion au port applicatif."},
+        {"type": "list", "ordered": true, "items": ["L'interface est-elle connectée et dans le bon VLAN ?", "L'adresse est-elle dans le subnet attendu, sans conflit ?", "La passerelle est-elle joignable ? Le cache ARP contient-il son entrée ?", "La destination par IP est-elle joignable ? ICMP est-il filtré ?", "Le nom se résout-il vers la bonne adresse ?", "Le port TCP du service est-il ouvert et l'application répond-elle ?"]},
+        {"type": "heading", "text": "Consigner les preuves"},
+        {"type": "paragraph", "text": "Un bon diagnostic conserve les sorties de commandes, les captures filtrées et l'heure des tests. Une hypothèse se valide par une observation ; on ne change qu'un paramètre à la fois pour pouvoir attribuer l'effet observé."},
+        {"type": "lab-link", "labId": "lab-wireshark", "text": "TP : observer ARP, DHCP, DNS et ICMP dans Wireshark"},
+        {"type": "quiz-link", "quizId": "quiz-services", "text": "Quiz de validation des services réseau"}
+      ]
+    }
+  ],
+  "references": [
+    {"title": "RFC 826 — ARP", "url": "https://www.rfc-editor.org/rfc/rfc826", "type": "standard"},
+    {"title": "RFC 2131 — DHCP", "url": "https://www.rfc-editor.org/rfc/rfc2131", "type": "standard"},
+    {"title": "RFC 1034 — DNS : concepts", "url": "https://www.rfc-editor.org/rfc/rfc1034", "type": "standard"},
+    {"title": "RFC 1035 — DNS : implémentation", "url": "https://www.rfc-editor.org/rfc/rfc1035", "type": "standard"},
+    {"title": "RFC 792 — ICMP", "url": "https://www.rfc-editor.org/rfc/rfc792", "type": "standard"}
+  ],
+  "revisionSheet": {
+    "keyPoints": ["ARP : IPv4 → MAC sur le lien local ; requête broadcast, réponse unicast.", "Pour une destination distante, ARP résout la MAC de la passerelle.", "DHCP DORA ; UDP 67 serveur / 68 client ; ip helper-address pour relais.", "DNS : A, AAAA, CNAME, MX, NS, PTR ; UDP/TCP 53 ; TTL de cache.", "ICMP sert aux tests et erreurs ; ping/traceroute peuvent être filtrés.", "Toujours vérifier le chemin retour et distinguer panne IP, DNS et application."],
+    "formulas": [],
+    "commands": ["ip neigh show", "dig <nom> A", "dig +trace <nom>", "ping -c 4 <adresse>", "tracepath <adresse>", "show ip dhcp binding", "show ip dhcp pool"]
+  }
+}

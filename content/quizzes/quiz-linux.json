@@ -1,0 +1,138 @@
+{
+  "id": "quiz-linux",
+  "title": "Quiz — Linux réseau",
+  "courseId": "linux-prise-en-main",
+  "level": 1,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "single",
+      "prompt": "Quelle commande affiche les routes IPv4 ?",
+      "options": [
+        "ip route show",
+        "ls -l",
+        "cat /etc/hosts uniquement",
+        "pwd"
+      ],
+      "answer": 0,
+      "explanation": "ip route show affiche la table de routage IPv4.",
+      "id": "quiz-linux-q1",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Choisis la commande iproute2 qui affiche la table de routage ; ip address montre les adresses, pas les routes.",
+      "pitfalls": "route vient de net-tools et peut être absent ; privilégie ip route show sur les distributions modernes."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle commande liste les sockets en écoute sans résolution de noms ?",
+      "options": [
+        "ss -tuln",
+        "rm -rf",
+        "mkfs",
+        "chmod 777"
+      ],
+      "answer": 0,
+      "explanation": "ss -tuln liste les sockets TCP/UDP en écoute avec ports numériques.",
+      "id": "quiz-linux-q2",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Décompose les options : TCP, UDP, écoute et numérique ; l'absence de résolution de noms correspond à -n.",
+      "pitfalls": "ss -tuln montre l'écoute locale, pas les connexions établies ni l'accessibilité depuis un client distant."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quelles commandes sont principalement des observations réseau ?",
+      "options": [
+        "ip -br address",
+        "ip neigh",
+        "ping -c 4",
+        "mkfs"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Les trois premières observent/testent ; mkfs crée un système de fichiers et peut détruire des données.",
+      "id": "quiz-linux-q3",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Demande-toi si la commande modifie le système : observer adresses, voisins et joignabilité ne détruit pas de données.",
+      "pitfalls": "mkfs n'est pas une commande d'observation : elle formate et peut effacer un système de fichiers."
+    },
+    {
+      "type": "boolean",
+      "prompt": "sudo est nécessaire pour toutes les commandes de lecture réseau.",
+      "answer": false,
+      "explanation": "Beaucoup de lectures sont accessibles sans privilèges ; certaines captures ou journaux exigent des droits.",
+      "id": "quiz-linux-q4",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Les droits dépendent de l'action : lire l'état réseau est souvent permis, capturer ou modifier la configuration peut exiger des privilèges.",
+      "pitfalls": "N'utilise pas sudo par réflexe pour toute commande ; applique le moindre privilège nécessaire."
+    },
+    {
+      "type": "single",
+      "prompt": "Que signifie une route default via 192.168.1.1 ?",
+      "options": [
+        "Tout le trafic local utilise DNS",
+        "Les destinations sans route plus spécifique sont envoyées à cette passerelle",
+        "192.168.1.1 est toujours Internet",
+        "La machine est un routeur OSPF"
+      ],
+      "answer": 1,
+      "explanation": "La route par défaut est utilisée en l’absence de correspondance plus spécifique.",
+      "id": "quiz-linux-q5",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Une route default est le recours quand aucun préfixe plus spécifique ne correspond ; via indique le prochain saut.",
+      "pitfalls": "La passerelle n'est pas la destination finale et ne remplace pas les routes directement connectées plus spécifiques."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel filtre tcpdump sélectionne ARP ou ICMP ?",
+      "options": [
+        "'arp or icmp'",
+        "'tcp port 80'",
+        "'vlan 10'",
+        "'udp port 53'"
+      ],
+      "answer": 0,
+      "explanation": "Le filtre arp or icmp limite la capture à ces deux protocoles.",
+      "id": "quiz-linux-q6",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Le filtre de capture combine deux protocoles avec un OU logique ; il s'applique à tcpdump, pas à l'affichage Wireshark.",
+      "pitfalls": "Ne confonds pas filtre de capture BPF et filtre d'affichage Wireshark : leurs syntaxes diffèrent."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Quelle valeur numérique correspond à rw-r--r-- ?",
+      "answer": 644,
+      "explanation": "Propriétaire 4+2=6 ; groupe 4 ; autres 4 → 644.",
+      "id": "quiz-linux-q7",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Convertis chaque triplet rwx en somme binaire : propriétaire 6, groupe 4, autres 4.",
+      "pitfalls": "N'oublie pas qu'un répertoire a besoin du droit x pour être traversé, même avec le droit r."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel outil ouvre un fichier .pcap avec une interface graphique ?",
+      "options": [
+        "Wireshark",
+        "Nano uniquement",
+        "mkfs",
+        "useradd"
+      ],
+      "answer": 0,
+      "explanation": "Wireshark analyse les captures pcap avec décodage protocolaire.",
+      "id": "quiz-linux-q8",
+      "topic": "Linux",
+      "courseRef": "linux-prise-en-main",
+      "reasoning": "Identifie l'outil graphique d'analyse de captures ; tcpdump capture en ligne de commande mais ne décode pas avec la même interface.",
+      "pitfalls": "Un fichier pcap peut contenir des données sensibles : capture avec autorisation et protège le fichier."
+    }
+  ]
+}

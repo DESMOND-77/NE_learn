@@ -1,0 +1,59 @@
+{
+  "id": "linux-prise-en-main",
+  "title": "Linux : première prise en main réseau",
+  "subtitle": "Lire son interface, tester la connectivité et comprendre les commandes avant de les automatiser.",
+  "level": 1,
+  "discipline": "systèmes",
+  "duration": "1 h 30",
+  "prerequisites": ["Notions de base sur les réseaux"],
+  "objectives": ["Naviguer dans un terminal sans danger", "Lire les interfaces, adresses, routes et voisins avec iproute2", "Tester une connexion avec ping et identifier les sockets avec ss", "Lire les journaux et les permissions sans modifier un système de production"],
+  "skills": ["Terminal Linux", "Diagnostic réseau de base", "Lecture de documentation man"],
+  "quizId": "quiz-linux",
+  "lessons": [
+    {
+      "id": "terminal", "title": "Le terminal sans peur", "duration": "30 min",
+      "blocks": [
+        {"type": "paragraph", "text": "Le terminal est une interface texte où l'on saisit des commandes. Il est précis et scriptable, mais il ne demande pas toujours confirmation. Commence dans une machine virtuelle ou un laboratoire isolé, jamais sur un serveur de production sans procédure."},
+        {"type": "code", "language": "bash", "title": "Commandes de découverte (lecture seule)", "code": "pwd                 # répertoire courant\nls -l               # liste détaillée\ncd /etc             # changer de répertoire\ncat /etc/os-release # distribution\nwhoami              # utilisateur courant\nip --help           # aide de la commande\nman ip              # manuel (q pour quitter)"},
+        {"type": "heading", "text": "Utilisateur et privilèges"},
+        {"type": "paragraph", "text": "Le compte root peut tout modifier. sudo exécute une commande avec des privilèges élevés selon la politique configurée. Utilisez sudo seulement pour l'action nécessaire, lisez la commande avant Entrée et évitez les scripts trouvés en ligne sans compréhension."},
+        {"type": "note", "variant": "warning", "title": "Commandes à ne pas taper pour s'entraîner", "text": "rm -rf, mkfs, dd, chmod -R ou une redirection > sur un fichier système peuvent détruire des données. Ce cours commence par des commandes de lecture. Une modification réseau peut aussi couper votre session SSH."},
+        {"type": "heading", "text": "Permissions"},
+        {"type": "paragraph", "text": "Les droits Unix distinguent propriétaire (user), groupe (group) et autres (others), avec lecture r=4, écriture w=2, exécution x=1. `-rw-r--r--` correspond à 644 : propriétaire lecture/écriture, groupe et autres lecture seule. Un répertoire nécessite x pour être traversé."}
+      ]
+    },
+    {
+      "id": "interfaces-routes", "title": "Interfaces, adresses et routes", "duration": "30 min",
+      "blocks": [
+        {"type": "code", "language": "bash", "title": "Observer avec iproute2", "code": "ip link show           # interfaces et état L2\nip -br address show    # adresses IP résumées\nip route show          # table de routage IPv4\nip -6 route show       # routes IPv6\nip neigh show          # voisins IPv4/IPv6\nip -s link show eth0   # compteurs d'une interface"},
+        {"type": "paragraph", "text": "`eth0`, `ens...` ou `enp...` sont des noms d'interfaces ; lo est la boucle locale. `UP` indique un état administratif activé ; `LOWER_UP` indique généralement une liaison physique détectée. Une interface UP sans LOWER_UP peut être débranchée ou avoir un problème de support."},
+        {"type": "heading", "text": "Lire une route"},
+        {"type": "code", "language": "text", "title": "Exemple de sortie", "code": "default via 192.168.1.1 dev eth0\n192.168.1.0/24 dev eth0 proto kernel scope link src 192.168.1.10"},
+        {"type": "paragraph", "text": "La première ligne est la route par défaut via la passerelle. La seconde indique le réseau directement connecté. La machine n'a pas besoin de passerelle pour joindre une adresse de ce subnet ; elle utilise ARP pour trouver sa MAC."},
+        {"type": "note", "variant": "info", "title": "ifconfig est historique", "text": "ifconfig, route et arp viennent du paquet net-tools et sont obsolètes sur de nombreuses distributions. Préférez ip (iproute2). Les options exactes peuvent varier selon la distribution et la version : consultez man ip."}
+      ]
+    },
+    {
+      "id": "tester-observer", "title": "Tester, observer, documenter", "duration": "30 min",
+      "blocks": [
+        {"type": "code", "language": "bash", "title": "Tests non destructifs", "code": "ping -c 4 127.0.0.1\nping -c 4 192.168.1.1\nping -c 4 1.1.1.1\ntracepath 1.1.1.1\nss -tuln              # sockets UDP/TCP en écoute, sans résolution\ngetent hosts example.org\ndig example.org A     # si bind9-dnsutils est installé\njournalctl -k -n 50   # 50 derniers messages du noyau (droits requis selon système)"},
+        {"type": "paragraph", "text": "L'ordre des tests aide à isoler la panne : boucle locale, propre IP/passerelle, destination distante par IP, puis nom DNS. `ss -tuln` montre les services en écoute mais ne prouve pas qu'un pare-feu autorise un client distant à les joindre."},
+        {"type": "heading", "text": "Capturer avec tcpdump"},
+        {"type": "paragraph", "text": "tcpdump capture les paquets vus par une interface. Il nécessite des privilèges adaptés. Ne capturez que le trafic nécessaire, avec son autorisation, et protégez les fichiers .pcap qui peuvent contenir des données sensibles."},
+        {"type": "code", "language": "bash", "title": "Capture limitée sur un laboratoire", "code": "# 20 paquets ARP ou ICMP sur eth0, sans résolution de noms\nsudo tcpdump -i eth0 -n -c 20 'arp or icmp'\n# Écriture dans un fichier du laboratoire\nsudo tcpdump -i eth0 -n -c 100 -w lab-capture.pcap 'arp or icmp'"},
+        {"type": "lab-link", "labId": "lab-wireshark", "text": "TP : ouvrir la capture dans Wireshark et expliquer chaque échange"}
+      ]
+    }
+  ],
+  "references": [
+    {"title": "Linux man-pages — ip(8)", "url": "https://man7.org/linux/man-pages/man8/ip.8.html", "type": "documentation"},
+    {"title": "Linux man-pages — ss(8)", "url": "https://man7.org/linux/man-pages/man8/ss.8.html", "type": "documentation"},
+    {"title": "Wireshark — User's Guide", "url": "https://www.wireshark.org/docs/wsug_html_chunked/", "type": "documentation officielle"},
+    {"title": "tcpdump — manuel", "url": "https://www.tcpdump.org/manpages/tcpdump.1.html", "type": "documentation officielle"}
+  ],
+  "revisionSheet": {
+    "keyPoints": ["Commencer par les commandes de lecture ; privilèges seulement si nécessaire.", "ip link, ip address, ip route, ip neigh : les quatre observations de base.", "ss -tuln : sockets en écoute ; ne prouve pas l'accessibilité à travers un pare-feu.", "ping/traceroute peuvent être filtrés ; DNS est un test distinct.", "Capturer uniquement le trafic autorisé et protéger les fichiers pcap."],
+    "formulas": ["Permissions numériques : r=4, w=2, x=1 ; 644 = rw-r--r--"],
+    "commands": ["ip -br address show", "ip route show", "ip neigh show", "ping -c 4 <adresse>", "ss -tuln", "man <commande>", "sudo tcpdump -i <interface> -n -c 20 'arp or icmp'"]
+  }
+}

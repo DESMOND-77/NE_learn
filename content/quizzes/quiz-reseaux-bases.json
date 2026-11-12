@@ -1,0 +1,148 @@
+{
+  "id": "quiz-reseaux-bases",
+  "title": "Quiz — Fondamentaux réseau",
+  "courseId": "reseaux-fondamentaux",
+  "level": 1,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "single",
+      "prompt": "Quel équipement relie des réseaux IP différents ?",
+      "options": [
+        "Un commutateur L2",
+        "Un routeur",
+        "Un répéteur",
+        "Une carte réseau"
+      ],
+      "answer": 1,
+      "explanation": "Le routeur consulte une table de routage pour transférer des paquets entre réseaux IP.",
+      "reasoning": "Identifie le plan d'adressage utilisé : relier des réseaux IP distincts demande une décision de routage fondée sur le préfixe de destination.",
+      "id": "quiz-reseaux-bases-q1",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "pitfalls": "Ne confonds pas commutateur L2 (MAC, même réseau) et routeur L3 (IP, réseaux distincts)."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle étendue correspond à un LAN ?",
+      "options": [
+        "Quelques mètres autour d’une personne",
+        "Un bâtiment ou un campus",
+        "Uniquement un pays",
+        "Le monde entier"
+      ],
+      "answer": 1,
+      "explanation": "Un LAN couvre une zone locale : salle, bâtiment ou campus.",
+      "id": "quiz-reseaux-bases-q2",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "reasoning": "Classe le réseau par étendue géographique : salle, bâtiment ou campus correspondent à un LAN ; ville, pays et monde correspondent à MAN, WAN et Internet.",
+      "pitfalls": "Le débit ne définit pas l'étendue du réseau : un LAN peut être rapide ou lent."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quelles propositions décrivent la fibre optique ?",
+      "options": [
+        "Transporte de la lumière",
+        "Est limitée à 100 m comme Ethernet cuivre",
+        "Résiste aux perturbations électromagnétiques",
+        "Peut être monomode ou multimode"
+      ],
+      "answer": [
+        0,
+        2,
+        3
+      ],
+      "explanation": "La fibre transporte la lumière et offre des portées dépendant du type de fibre et des optiques.",
+      "pitfalls": "Ne prête pas à la fibre une portée infinie ni une immunité aux pertes : le bilan optique reste nécessaire.",
+      "id": "quiz-reseaux-bases-q3",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "reasoning": "Vérifie chaque propriété séparément : nature du signal, sensibilité électromagnétique et modes de propagation sont trois critères distincts de la fibre."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Dans un réseau moderne, un hub crée un domaine de collision par port.",
+      "answer": false,
+      "explanation": "Le hub partage le même domaine de collision ; le switch crée un domaine de collision par port.",
+      "id": "quiz-reseaux-bases-q4",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "reasoning": "Demande-toi si les ports partagent le même support logique : un hub répète tout, un switch segmente les domaines de collision.",
+      "pitfalls": "Ne confonds pas domaine de collision et domaine de broadcast : un switch L2 conserve un domaine de broadcast par VLAN."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle adresse change normalement à chaque saut de routeur, hors NAT ?",
+      "options": [
+        "L’adresse IP destination",
+        "L’adresse MAC destination",
+        "L’adresse IP source",
+        "Le numéro de port source"
+      ],
+      "answer": 1,
+      "explanation": "Une nouvelle trame L2 est construite à chaque saut ; les adresses IP de bout en bout restent inchangées hors NAT.",
+      "id": "quiz-reseaux-bases-q5",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "reasoning": "Suis une trame de saut en saut : le routeur conserve le paquet IP mais reconstruit l'en-tête de liaison pour le prochain segment.",
+      "pitfalls": "Ne réponds pas adresse IP destination : hors NAT, elle identifie le destinataire final de bout en bout."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quelles métriques sont importantes pour la voix sur IP ?",
+      "options": [
+        "Latence",
+        "Gigue",
+        "Perte de paquets",
+        "Couleur du câble"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "La voix exige des délais faibles et réguliers ; les pertes dégradent la qualité.",
+      "id": "quiz-reseaux-bases-q6",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "reasoning": "La voix est interactive : évalue le délai total, sa variation et les pertes, puis distingue ces contraintes de la capacité brute.",
+      "pitfalls": "Un gros débit ne corrige pas une gigue élevée ni une latence satellite importante."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel est le rôle d’un protocole ?",
+      "options": [
+        "Définir les règles et le format des échanges",
+        "Augmenter automatiquement le débit",
+        "Remplacer le support physique",
+        "Attribuer une adresse MAC unique au monde"
+      ],
+      "answer": 0,
+      "explanation": "Un protocole définit notamment les messages, leur format, leur ordre et les actions associées.",
+      "id": "quiz-reseaux-bases-q7",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "reasoning": "Un protocole est un contrat d'interopérabilité : formats, séquences et actions doivent être compris par les deux extrémités.",
+      "pitfalls": "Ne réduis pas un protocole à un câble, une marque d'équipement ou une application particulière."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle topologie physique est dominante en LAN Ethernet moderne ?",
+      "options": [
+        "Bus coaxial",
+        "Anneau à jeton",
+        "Étoile autour de commutateurs",
+        "Maillage complet entre tous les PC"
+      ],
+      "answer": 2,
+      "explanation": "Les hôtes sont reliés à des commutateurs, formant une étoile ou une étoile étendue.",
+      "id": "quiz-reseaux-bases-q8",
+      "topic": "Fondamentaux réseau",
+      "courseRef": "reseaux-fondamentaux",
+      "reasoning": "Observe le câblage réel : chaque hôte possède une liaison vers un commutateur central, ce qui définit l'étoile physique.",
+      "pitfalls": "Ne confonds pas topologie physique et topologie logique, ni étoile moderne et bus historique."
+    }
+  ]
+}

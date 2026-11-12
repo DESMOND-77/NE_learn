@@ -1,0 +1,22 @@
+{
+  "name": "ne-learn",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NE_learn — plateforme pédagogique interactive dédiée aux réseaux informatiques et aux télécommunications, de la première année au cycle ingénieur.",
+  "type": "module",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env scripts/dev.mjs",
+    "build": "npm run build --workspace apps/web",
+    "start": "node --env-file-if-exists=.env apps/api/src/server.js",
+    "test": "node --test packages/core/tests/*.test.js apps/api/tests/*.test.js",
+    "test:e2e": "playwright test --config apps/web/playwright.config.js",
+    "backup": "node scripts/backup.mjs",
+    "lint:content": "node scripts/validate-content.mjs"
+  },
+  "engines": { "node": ">=22.12" },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,177 @@
+{
+  "id": "quiz-osi",
+  "title": "Quiz — OSI et TCP/IP",
+  "courseId": "modele-osi",
+  "level": 1,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "order",
+      "prompt": "Classe les couches OSI de la plus basse à la plus haute.",
+      "items": [
+        "Application",
+        "Transport",
+        "Physique",
+        "Réseau",
+        "Session",
+        "Liaison",
+        "Présentation"
+      ],
+      "answer": [
+        2,
+        5,
+        3,
+        1,
+        4,
+        6,
+        0
+      ],
+      "explanation": "De bas en haut : Physique, Liaison, Réseau, Transport, Session, Présentation, Application.",
+      "id": "quiz-osi-q1",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Pars du support physique puis remonte vers l'utilisateur : bits, trames, paquets, segments, dialogue, représentation, application.",
+      "pitfalls": "Les couches session, présentation et application sont souvent inversées ; mémorise leur ordre fonctionnel."
+    },
+    {
+      "type": "match",
+      "prompt": "Associe chaque couche à son PDU.",
+      "pairs": [
+        {
+          "left": "Liaison",
+          "right": "Trame"
+        },
+        {
+          "left": "Réseau",
+          "right": "Paquet"
+        },
+        {
+          "left": "Transport TCP",
+          "right": "Segment"
+        },
+        {
+          "left": "Physique",
+          "right": "Bits"
+        }
+      ],
+      "explanation": "Le nom du PDU dépend de la couche : bits L1, trame L2, paquet L3, segment L4.",
+      "id": "quiz-osi-q2",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Associe chaque PDU à la couche qui ajoute son en-tête : liaison, réseau et transport ont des noms distincts.",
+      "pitfalls": "Segment désigne ici TCP ; UDP utilise le terme datagramme, et paquet ne désigne pas la trame Ethernet."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel mécanisme établit une connexion TCP ?",
+      "options": [
+        "ARP request",
+        "Three-way handshake SYN/SYN-ACK/ACK",
+        "DHCP DORA",
+        "Requête DNS"
+      ],
+      "answer": 1,
+      "explanation": "TCP échange SYN, SYN-ACK puis ACK avant le transfert de données.",
+      "id": "quiz-osi-q3",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Reconstitue l'établissement TCP : le client demande une synchronisation, le serveur accuse et synchronise, le client accuse à son tour.",
+      "pitfalls": "Ne confonds pas cet échange avec DORA de DHCP ou avec la résolution DNS."
+    },
+    {
+      "type": "multiple",
+      "prompt": "Quelles garanties UDP ne fournit-il pas ?",
+      "options": [
+        "Livraison fiable",
+        "Ordre de livraison",
+        "Numéros de ports",
+        "Retransmission automatique"
+      ],
+      "answer": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "UDP possède des ports mais ne garantit ni livraison, ni ordre, ni retransmission.",
+      "id": "quiz-osi-q4",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Liste uniquement les services absents d'UDP ; les ports existent bien dans son en-tête pour démultiplexer les applications.",
+      "pitfalls": "Ne coche pas « ports » : UDP fournit des ports, mais pas la fiabilité de TCP."
+    },
+    {
+      "type": "boolean",
+      "prompt": "Un routeur réécrit les adresses MAC de la trame à chaque saut.",
+      "answer": true,
+      "explanation": "Il désencapsule la trame entrante et reconstruit une trame pour le lien suivant.",
+      "id": "quiz-osi-q5",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "À chaque interface de sortie, le routeur crée une nouvelle trame avec sa MAC source et la MAC du prochain saut.",
+      "pitfalls": "Ne conserve pas les MAC de bout en bout : elles n'ont de sens que sur le lien local."
+    },
+    {
+      "type": "single",
+      "prompt": "À quelle couche OSI associe-t-on principalement le routage IP ?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "7"
+      ],
+      "answer": 1,
+      "explanation": "IP assure l’adressage logique et le routage en couche 3 réseau.",
+      "id": "quiz-osi-q6",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Le routage choisit un chemin entre réseaux à partir d'adresses logiques IP : c'est la responsabilité de la couche réseau.",
+      "pitfalls": "Ne choisis pas liaison : la commutation MAC reste locale au domaine L2."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Quel est le port TCP standard de HTTPS ?",
+      "answer": 443,
+      "explanation": "HTTPS utilise classiquement TCP 443 ; HTTP utilise TCP 80.",
+      "id": "quiz-osi-q7",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Identifie le service nommé HTTPS puis rappelle son port TCP well-known par défaut.",
+      "pitfalls": "443 est le port par défaut, pas une obligation : un serveur peut écouter sur un autre port explicitement configuré."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel protocole permet la voix temps réel sans retransmission systématique ?",
+      "options": [
+        "UDP",
+        "FTP",
+        "SMTP",
+        "TCP avec livraison garantie obligatoire"
+      ],
+      "answer": 0,
+      "explanation": "UDP évite les délais de retransmission ; l’application peut tolérer ou compenser certaines pertes.",
+      "id": "quiz-osi-q8",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Compare la contrainte temps réel avec la retransmission : attendre une donnée perdue peut être pire que la perdre.",
+      "pitfalls": "UDP ne garantit pas la qualité ; l'application doit gérer tampons, pertes et éventuellement ses propres mécanismes."
+    },
+    {
+      "type": "single",
+      "prompt": "Quel en-tête est ajouté après l’en-tête IP lors de l’encapsulation descendante ?",
+      "options": [
+        "HTTP",
+        "TCP",
+        "Ethernet",
+        "TLS"
+      ],
+      "answer": 2,
+      "explanation": "À l’émission : données → segment TCP → paquet IP → trame Ethernet → bits.",
+      "id": "quiz-osi-q9",
+      "topic": "OSI / TCP-IP",
+      "courseRef": "modele-osi",
+      "reasoning": "Descends la pile côté émetteur : après le paquet IP vient l'en-tête de liaison, par exemple Ethernet sur un LAN.",
+      "pitfalls": "Ne réponds pas TCP : son en-tête est ajouté avant IP lors de l'encapsulation descendante."
+    }
+  ]
+}

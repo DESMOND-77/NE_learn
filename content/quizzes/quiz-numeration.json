@@ -1,0 +1,145 @@
+{
+  "id": "quiz-numeration",
+  "title": "Quiz — Binaire et conversions",
+  "courseId": "numeration",
+  "level": 1,
+  "duration": "10–15 min",
+  "passingPercent": 70,
+  "questions": [
+    {
+      "type": "numeric",
+      "prompt": "Quelle valeur décimale correspond au binaire 11000000₂ ?",
+      "answer": 192,
+      "explanation": "11000000₂ = 128 + 64 = 192.",
+      "id": "quiz-numeration-q1",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Additionne les poids des bits à 1 de gauche à droite : 128 puis 64, les autres positions valant zéro.",
+      "pitfalls": "Ne lis pas 11000000 comme onze millions en décimal ; la base change la valeur des positions."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle est l’écriture binaire de 168 ?",
+      "options": [
+        "10101000",
+        "11000000",
+        "10000001",
+        "11110000"
+      ],
+      "answer": 0,
+      "explanation": "168 = 128 + 32 + 8 = 10101000₂.",
+      "id": "quiz-numeration-q2",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Décompose 168 en puissances de deux décroissantes : 128, puis 32, puis 8 ; place un 1 uniquement à ces positions.",
+      "pitfalls": "N'oublie pas les zéros des positions absentes : une conversion binaire garde huit positions pour un octet."
+    },
+    {
+      "type": "single",
+      "prompt": "Que vaut 0xC0 en décimal ?",
+      "options": [
+        "128",
+        "160",
+        "192",
+        "240"
+      ],
+      "answer": 2,
+      "explanation": "C=12 et 0=0 : 12×16=192.",
+      "id": "quiz-numeration-q3",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Convertis chaque chiffre hexadécimal par son poids : C vaut 12 et occupe le seizième, soit 12×16+0.",
+      "pitfalls": "Ne confonds pas C0 avec 120 : en hexadécimal, C représente douze."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Combien de bits représentent deux chiffres hexadécimaux ?",
+      "answer": 8,
+      "explanation": "Un chiffre hexadécimal représente 4 bits ; deux en représentent 8.",
+      "id": "quiz-numeration-q4",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Un chiffre hexadécimal code quatre bits ; multiplie par le nombre de chiffres pour obtenir la taille binaire.",
+      "pitfalls": "Ne confonds pas chiffre hexadécimal et octet : il faut deux chiffres pour un octet."
+    },
+    {
+      "type": "single",
+      "prompt": "1010 AND 1100 = ?",
+      "options": [
+        "1000",
+        "1110",
+        "0110",
+        "1010"
+      ],
+      "answer": 0,
+      "explanation": "Le AND ne conserve que les positions où les deux bits valent 1 : 1000.",
+      "id": "quiz-numeration-q5",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Applique AND bit à bit : le résultat vaut 1 seulement si les deux opérandes valent 1 à la même position.",
+      "pitfalls": "Ne fais pas un OU logique : 1010 OR 1100 donnerait 1110, pas 1000."
+    },
+    {
+      "type": "numeric",
+      "prompt": "Dans 192.168.1.0/24 → /26, combien de bits sont empruntés ?",
+      "answer": 2,
+      "explanation": "26−24=2 bits empruntés, soit 4 sous-réseaux.",
+      "id": "quiz-numeration-q6",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Soustrais les longueurs de préfixe : les bits ajoutés au masque sont empruntés à la partie hôte.",
+      "pitfalls": "Ne réponds pas 4 : quatre est le nombre de sous-réseaux obtenus, pas le nombre de bits empruntés."
+    },
+    {
+      "type": "single",
+      "prompt": "Quelle valeur est impossible dans un octet IPv4 ?",
+      "options": [
+        "0",
+        "128",
+        "255",
+        "256"
+      ],
+      "answer": 3,
+      "explanation": "Un octet non signé représente 0 à 255.",
+      "id": "quiz-numeration-q7",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Un octet non signé couvre 2^8 valeurs, de 0 à 255 ; toute valeur supérieure sort du domaine IPv4.",
+      "pitfalls": "255 est le maximum valide, pas 256 ; vérifie chaque octet séparément."
+    },
+    {
+      "type": "single",
+      "prompt": "Le binaire 11110000 correspond à quel masque partiel ?",
+      "options": [
+        "192",
+        "224",
+        "240",
+        "248"
+      ],
+      "answer": 2,
+      "explanation": "128+64+32+16=240.",
+      "id": "quiz-numeration-q8",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Additionne les quatre poids de gauche : 128+64+32+16 donne la valeur décimale de l'octet de masque.",
+      "pitfalls": "Ne confonds pas nombre de bits à 1 et valeur décimale : quatre bits donnent 240, pas 4."
+    },
+    {
+      "type": "single",
+      "prompt": "Convertis 10101001₂ en hexadécimal.",
+      "options": [
+        "A9",
+        "9A",
+        "B1",
+        "A5"
+      ],
+      "answer": 0,
+      "explanation": "1010=A et 1001=9, donc A9.",
+      "id": "quiz-numeration-q9",
+      "topic": "Numération",
+      "courseRef": "numeration",
+      "reasoning": "Coupe l'octet en deux quartets puis convertis chaque quartet : 1010 vaut A et 1001 vaut 9.",
+      "pitfalls": "Ne convertis pas l'octet entier en un seul chiffre hexadécimal : deux chiffres sont nécessaires."
+    }
+  ]
+}
